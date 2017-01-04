@@ -62,7 +62,7 @@ div, #miles {
 }
 
 #waffle {
-    margin-left: -5%;
+    margin-left: -3%;
 }
 
 .green {
@@ -70,7 +70,7 @@ div, #miles {
 }
 
 .pink {
-    color: #f7b6d2;
+    color: #fdd0a2;
 }
 
 .blue {
@@ -83,6 +83,25 @@ div, #miles {
 
 #driving-car, #age-percent, #age-moreless, #total-percent, #total-moreless, .green, .pink, .blue, .purple {
     font-weight: bold;
+}
+
+.centered {
+    text-align: center;
+}
+
+.tooltip-stuff {
+    position: absolute;
+    z-index: 10;
+    display: none;
+    background: #eee;
+    box-shadow: 0 0 5px #999999;
+    color: #333;
+    font-size: 12px;
+    padding: 10px;
+    text-align: center;
+    top: -65px;
+    width: 100px;
+    white-space: pre-line;
 }
 
 /* typeahead styling */
@@ -133,6 +152,7 @@ div, #miles {
     color: #fff;
     background-color: #428bca;
     cursor: pointer;
+    margin-left: 1%;
 }
 
 .tt-suggestion.tt-is-under-cursor a {
