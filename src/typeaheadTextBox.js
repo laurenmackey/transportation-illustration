@@ -3180,7 +3180,7 @@ var typeaheadInitialize = function() {
         source: substringMatcher(counties)
     })
 
-    // Global variables for function below
+    // Declare global variables for function below
     var next = 1;
     var removeCheck = true;
 
@@ -3191,7 +3191,7 @@ var typeaheadInitialize = function() {
         // increment next
         next = next + 1;
 
-        // variable declaration for adding new transit and mileage inputs, and the remove button
+        // declare variables for adding new transit and mileage inputs, and the remove button
         var newTransit = '<input type="text" class="form-control typeahead tt-hint transit-types field' + next + '">';
         var newTransitInput = $(newTransit);
         var newMiles = '<input type="text" class="form-control typeahead tt-hint transit-miles field' + next + '">';
@@ -3199,7 +3199,7 @@ var typeaheadInitialize = function() {
         var removeButton = '<button type="button" class="btn btn-danger remove-me">-</button>';
         var removeButtonAdd = $(removeButton);
 
-        // adds new transit input and enables typeahead for it
+        // add new transit input and enable typeahead for it
         newTransitInput.appendTo('#field-transit').typeahead({
             hint: true,
             highlight: true,
@@ -3210,18 +3210,18 @@ var typeaheadInitialize = function() {
             source: substringMatcher(transit)   
         });
     
-        // adds new mileage input
+        // add new mileage input
         newMilesInput.appendTo('#field-miles');
 
-        // adds remove button on first click
+        // add remove button on first click
         if (removeCheck) {
             removeButtonAdd.appendTo('#button');
         }
 
-        // prevents multiple remove buttons from being added
+        // prevent multiple remove buttons from being added
         removeCheck = false;
 
-        // removes bottom transit and mileage inputs on remove button click
+        // remove bottom transit and mileage inputs on remove button click
         $('.remove-me').unbind().click(function(e){
             e.preventDefault();
             var fieldNum = '.field' + next;
@@ -3236,7 +3236,7 @@ var typeaheadInitialize = function() {
         });
     });
 
-    // Global variables for function below
+    // Declare global variables for function below
     var nextTwo = 1;
     var removeCheckTwo = true;
 
@@ -3247,13 +3247,13 @@ var typeaheadInitialize = function() {
         // increment next
         nextTwo = nextTwo + 1;
 
-        // variable declaration for adding new work input, and the remove button
+        // declare variables for adding new work input, and the remove button
         var newWork = '<input type="text" class="form-control typeahead tt-hint work fieldTwo' + nextTwo + '">';
         var newWorkInput = $(newWork);
         var removeButton = '<button type="button" class="btn btn-danger remove-me-two">-</button>';
         var removeButtonAdd = $(removeButton);
 
-        // adds new work input and enables typeahead for it
+        // add new work input and enable typeahead for it
         newWorkInput.appendTo('#field-work').typeahead({
             hint: true,
             highlight: true,
@@ -3264,15 +3264,15 @@ var typeaheadInitialize = function() {
             source: substringMatcher(work)   
         });
     
-        // adds remove button on first click
+        // add remove button on first click
         if (removeCheckTwo) {
             removeButtonAdd.appendTo('#button-two');
         }
 
-        // prevents multiple remove buttons from being added
+        // prevent multiple remove buttons from being added
         removeCheckTwo = false;
 
-        // removes bottom transit and mileage inputs on remove button click
+        // remove bottom transit and mileage inputs on remove button click
         $('.remove-me-two').unbind().click(function(e){
             e.preventDefault();
             var fieldNum = '.fieldTwo' + nextTwo;

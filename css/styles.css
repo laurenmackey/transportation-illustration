@@ -1,41 +1,51 @@
-Html, body, div {
-    Padding: 0;
-    Border: 0;
-    Margin: 0;
-}
+/* Style notes: broken up by page and sometimes subparts of the page, alphabetized within each commented area*/
 
-p {
+/* Overall styling */
+body {
     font-family: Helvetica, Arial, sans-serif;
-}
-
-.logo img {
-    margin-top: 2%;
-}
-
-#introText p {
-    font-size: 1.3em;
-    margin-top: 5%;
-    margin-bottom: 4%;
 }
 
 h1 {
     font-size: 28px;
 }
 
-.control-label {
-    font-size: 16px;
+Html, body, div {
+    padding: 0;
+    border: 0;
+    margin: 0;
+}
+
+.logo img {
+    margin-top: 2%;
+}
+
+.none {
+    display: none;
 }
 
 .page-header {
     margin-top: .8%;
 }
 
-.form-horizontal .control-label {
-    text-align: left;
+/* Intro page styling */
+#introText p {
+    font-size: 1.3em;
+    margin-top: 5%;
+    margin-bottom: 4%;
 }
 
-div, #miles {
-    margin-left: -1%;
+/* Profile page styling */
+.alert-text {
+    font-size: 17.5px;
+    text-align: center;
+}
+
+.control-label {
+    font-size: 16px;
+}
+
+.form-horizontal .control-label {
+    text-align: left;
 }
 
 #weekly-mileage {
@@ -43,68 +53,7 @@ div, #miles {
     margin-top: 3%;
 }
 
-.alert-text {
-    font-size: 17.5px;
-    text-align: center;
-}
-
-.none {
-    display: none;
-}
-
-.paragraph {
-    font-size: 17.5px;
-    margin-top: 3%;
-}
-
-.text {
-    margin-top: 5%;
-}
-
-#waffle {
-    margin-left: -3%;
-}
-
-.green {
-    color: #98df8a;
-}
-
-.pink {
-    color: #fdd0a2;
-}
-
-.blue {
-    color: #17becf;
-}
-
-.purple {
-    color: #9467bd;
-}
-
-#driving-car, #age-percent, #age-moreless, #total-percent, #total-moreless, .green, .pink, .blue, .purple {
-    font-weight: bold;
-}
-
-.centered {
-    text-align: center;
-}
-
-.tooltip-stuff {
-    position: absolute;
-    z-index: 10;
-    display: none;
-    background: #eee;
-    box-shadow: 0 0 5px #999999;
-    color: #333;
-    font-size: 12px;
-    padding: 10px;
-    text-align: center;
-    top: -65px;
-    width: 100px;
-    white-space: pre-line;
-}
-
-/* typeahead styling */
+/* Profile page styling - Typeahead */
 
 .twitter-typeahead .tt-query,
 .twitter-typeahead .tt-hint {
@@ -166,4 +115,109 @@ div, #miles {
 .tt-cursor{
     background-color: #428bca;
     color: #FFFFFF;
+}
+
+/* Visualization page styling */
+
+.axis text {
+    font-size: 14px;
+    fill: #666;
+}
+
+#back {
+    margin-bottom: 20%;
+}
+
+.bold {
+    font-weight: bold;
+}
+
+#driving-paragraph-one {
+    margin-top: 19%;
+}
+
+.grid line, .grid path {
+    fill: none;
+    stroke: lightgrey;
+    opacity: 0.7;
+    stroke-dasharray: 3,2;
+    shape-rendering: crispEdges;
+}
+
+.grid text {
+    display: none;
+}
+
+hr {
+    border-color: #D8D8D8;   
+}
+
+.legend {
+    fill: #666;
+}
+
+.legend-line {
+    fill: #de9ed6;
+}
+
+.not-first {
+    margin-top: 4%;
+}
+
+.paragraph {
+    font-size: 17.5px;
+    margin-top: 3%;
+}
+
+path.domain {
+    display: none;
+}
+
+.personal-line {
+    stroke: #de9ed6;
+    stroke-width: 3;
+}
+
+.text {
+    margin-top: 5%;
+}
+
+.tooltip-stuff {
+    position: absolute;
+    z-index: 10;
+    display: none;
+    background: #eee;
+    box-shadow: 0 0 5px #999999;
+    color: #333;
+    font-size: 12px;
+    padding: 10px;
+    text-align: center;
+    top: -65px;
+    width: 100px;
+    white-space: pre-line;
+}
+
+.xAxisLine path {
+    display: inline;
+    fill: none;
+    stroke: lightgrey;
+    stroke-width: 1.05;
+    shape-rendering: crispEdges;
+}
+
+/* Visualization page styling- Color scheme */
+.blue {
+    color: #6baed6;
+}
+
+.green {
+    color: #98df8a;
+}
+
+.peach {
+    color: #fdd0a2;
+}
+
+.purple {
+    color: #de9ed6;
 }
