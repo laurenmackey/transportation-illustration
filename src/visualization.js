@@ -1,6 +1,17 @@
-// hide and show passed-in pages
-var hide = function(pageHide, pageShow) {
+// hide and show passed-in pages together
+var hideShow = function(pageHide, pageShow)
+{
+    document.getElementById(pageHide).classList.add('none');   
+    document.getElementById(pageShow).classList.remove('none');
+}
+
+// hide passed-in pages
+var hide = function(pageHide) {
     document.getElementById(pageHide).classList.add('none');
+}
+
+// show passed-in pages
+var show = function(pageShow) {
     document.getElementById(pageShow).classList.remove('none');
 }
 
@@ -49,13 +60,17 @@ var variables = function () {
         milesTotal,
         drivingData = ['16', 7624, '20', 15098, '35', 15291, '55', 11972, '65', 7646, 'total', 13476];
 
-    // hide any previously generated waffle viz paragraph info in case user went back and changed
-    document.getElementById('waffle-car-paragraph').classList.add('none');
-    document.getElementById('waffle-bicycle-paragraph').classList.add('none');
-    document.getElementById('waffle-walk-paragraph').classList.add('none');
-    document.getElementById('waffle-public-paragraph').classList.add('none');
+    // hide any previously generated waffle chart paragraph info and other charts in case user went back and changed
+    hide('waffle-car-paragraph');
+    hide('waffle-bicycle-paragraph');
+    hide('waffle-walk-paragraph');
+    hide('waffle-public-paragraph');
+    hide('driving-paragraph-one');
+    hide('driving-one');
+    hide('driving-paragraph-div-one');
+    show('buffer');
 
-    // loop through transit array to get transit types and their corresponding mileages, converted to annual amounts - REFACTOR
+    // loop through transit array to get transit types and their corresponding mileages, converted to annual amounts
     for (i = 1; i < transitLength * 2; i+=2) {
         if (transitTypes[i].value == 'Car') {
             carTransit = true;
@@ -88,13 +103,13 @@ var variables = function () {
         }
     }
 
-    // create variable for waffle viz on visualization page
+    // create variable for waffle chart on visualization page
     milesTotal = Math.floor(carMileage + bicycleMileage + walkMileage + publicMileage);
 
     // if they use a car, push data to the main array for the visualization page, plus generate and send variables for dynamic text
     if (carTransit == true) {        
         waffleData.push({'method': 'car', 'miles': carMileage});
-        carMileageNum = carMileage;
+        carMileageNum = carMileage;        
 
         // if they're under 16, no need to dynamically generate text
         if (age == 'U16') {
@@ -130,7 +145,7 @@ var variables = function () {
         waffleData.push({'method': 'bicycle', 'miles': bicycleMileage});
         bicycleMileage = addCommas(bicycleMileage);
         document.getElementById('waffle-bicycle').textContent = bicycleMileage;
-        document.getElementById('waffle-bicycle-paragraph').classList.remove('none');
+        show('waffle-bicycle-paragraph');
     }
 
     // if they walk, push data to the main array for the visualization page, plus generate and send variables for dynamic text
@@ -138,7 +153,7 @@ var variables = function () {
         waffleData.push({'method': 'walk', 'miles': walkMileage});
         walkMileage = addCommas(walkMileage);
         document.getElementById('waffle-walk').textContent = walkMileage;
-        document.getElementById('waffle-walk-paragraph').classList.remove('none');
+        show('waffle-walk-paragraph');
     }
 
     // if they use public transit, push data to the main array for the visualization page, plus generate and send variables for dynamic text
@@ -146,10 +161,10 @@ var variables = function () {
         waffleData.push({'method': 'public', 'miles': publicMileage});
         publicMileage = addCommas(publicMileage);
         document.getElementById('waffle-public').textContent = publicMileage;
-        document.getElementById('waffle-public-paragraph').classList.remove('none');
+        show('waffle-public-paragraph');
     }
 
-    // loop through work array to get work transit types - REFACTOR
+    // loop through work array to get work transit types
     for (j = 1; j < workLength * 2; j+=2) {
         if (work[j].value == 'Car - Solo') {
             carSoloWork = true;
@@ -169,9 +184,9 @@ var variables = function () {
     // yell at user if a field is blank
     if (age == 'Select age range' || !county || !state || !transitTypes[1].value || !transitMiles[0].value || !work[1].value || commute == 'Select commute time') {
         pass = false;
-        document.getElementById('field-alert').classList.remove('none');
-        document.getElementById('mileage-alert').classList.add('none');
-        document.getElementById('numeric-alert').classList.add('none');
+        show('field-alert');
+        hide('mileage-alert');
+        hide('numeric-alert');
     }
 
     // yell at user if they've inputted mileage without a transit, or vice versa
@@ -179,9 +194,9 @@ var variables = function () {
         for (l = 0; l < milesLength; l++) {
             if ((transitTypes[k].value && !transitMiles[l].value) || (!transitTypes[k].value && transitMiles[l].value)) {
                 pass = false;
-                document.getElementById('mileage-alert').classList.remove('none');
-                document.getElementById('numeric-alert').classList.add('none');
-                document.getElementById('field-alert').classList.add('none');
+                show('mileage-alert');
+                hide('numeric-alert');
+                hide('field-alert');
                 k = 3;
                 l = milesLength;
             } else {
@@ -194,28 +209,32 @@ var variables = function () {
     for (m = 0; m < milesLength; m++) {
         if (isNaN(transitMiles[m].value)) {
             pass = false;
-            document.getElementById('numeric-alert').classList.remove('none');
-            document.getElementById('mileage-alert').classList.add('none');
-            document.getElementById('field-alert').classList.add('none');
+            show('numeric-alert');
+            hide('mileage-alert');
+            hide('field-alert');
         }
     }
 
-    // hide profile page and shows visualization page on Next button click if all is well
+    // hide profile page and show visualization page on Next button click if all is well, plus show waffle viz
     if (pass) {
-        // send dynamically generated text to html
-        carMileage = addCommas(carMileage);
-        document.getElementById('waffle-car').textContent = carMileage;
+        hideShow('profile', 'visualization');
+        if (carTransit)
+        {
+            carMileage = addCommas(carMileage);
+            document.getElementById('waffle-car').textContent = carMileage;
+            show('waffle-car-paragraph');
+        }
+        waffleChart(milesTotal, waffleData);
+    }
+    
+    // if they drive, dynamically generate text then call drivingAgeBar
+    if (carTransit) {
         document.getElementById('driving-car').textContent = carMileage;
-        document.getElementById('waffle-car-paragraph').classList.remove('none');
         document.getElementById('age-percent').textContent = carAgePercent;
         document.getElementById('age-moreless').textContent = ageMoreLess;
         document.getElementById('total-percent').textContent = carTotalPercent;
         document.getElementById('total-moreless').textContent = totalMoreLess;
-        drivingViz(carMileageNum, drivingData, age);
-
-        // show and hide corrcet pages and call for the waffle viz
-        hide('profile', 'visualization');
-        waffleViz(milesTotal, waffleData);
+        drivingViz(carMileageNum, drivingData, age);        
     }
 }
 
@@ -246,8 +265,8 @@ var createTooltip = function(id) {
     return tooltip;
 }
 
-// generate the waffle viz
-var waffleViz = function (milesTotal, waffleData) {
+// generate the waffle chart
+var waffleChart = function (milesTotal, waffleData) {
     // declare variables
     var width,
         height,
@@ -374,10 +393,12 @@ var waffleViz = function (milesTotal, waffleData) {
     });
 }
 
-// generate the bar chart viz
+// generate the bar chart
 var drivingViz = function (carMileageNum, drivingData, age) {
-    document.getElementById('driving-paragraph-one').classList.remove('none');
-
+    show('driving-paragraph-one');
+    hide('buffer');
+    show('driving-one');
+ 
     // declare variables
     var drivingDataAges = [],
         drivingDataIdentification = [],
@@ -389,40 +410,40 @@ var drivingViz = function (carMileageNum, drivingData, age) {
         margin = {top: 10, right: 15, bottom: 45, left: 75},
         width = 515 - margin.left - margin.right,
         height = 335 - margin.top - margin.bottom;
-
+ 
     // create an array of correctly formatted ages to create a revised drivingData array
     drivingDataAges = ['16-19', '20-34', '35-54', '55-64', '65+', 'Overall'];
     drivingDataIdentification = ['sixteen', 'twenty', 'thirty-five', 'fifty-five', 'sixty-five', 'overall'];
-
+ 
     // create a revised drivingData array of objects with correct ages, mileage amounts, and identifications
     for (i = 0; i < drivingDataAges.length; i++) {
         drivingDataRevised.push({'firstAge': drivingData[k], 'age': drivingDataAges[i], 'miles': drivingData[j], 'identification': drivingDataIdentification[i]});
         j = j + 2;
         k = k + 2;
     }
-
+ 
     // create x and y scale functions that map each value in the domain to a value in the specified range
     var xScale = d3.scale.ordinal()
         .domain(drivingDataRevised.map(function(d) {
             return d.age;
         }))
         .rangeRoundBands([0, width], 0.3);
-
+ 
     var yScale = d3.scale.linear()
         .domain([0, d3.max(drivingDataRevised, function(d) {
             return d.miles;
         })])
         .range([height, 0]);
-
+ 
     // create x and y axes based on these scales
     var xAxis = d3.svg.axis()
         .scale(xScale)
         .orient('bottom');
-
+ 
     var yAxis = d3.svg.axis()
         .scale(yScale)
         .orient('left');
-
+ 
     // prevent multiple svg's from being created
     d3.select('#driving-one').selectAll('svg').remove();
     
@@ -433,26 +454,26 @@ var drivingViz = function (carMileageNum, drivingData, age) {
             .attr('height', height + margin.top + margin.bottom)
         .append('g')
             .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
-
+ 
     // append the y axis text and line
     svg.append('g')
         .attr('class', 'axis yAxisLine')
         .call(yAxis
             .tickSize(0))
-
+ 
     // append the x axis text and line
     svg.append('g')
         .attr('class', 'axis xAxisLine')
         .attr('transform', 'translate(0,' + (height) + ')')
         .call(xAxis
             .tickSize(0));
-
+ 
     // create the y axis grid
     var yAxisGrid = yAxis.ticks(numberOfYTicks)
         .tickSize(width, 0)
         .tickFormat("")
         .orient('right');
-
+ 
     // append the y axis grid
     svg.append('g')
         .attr('class', 'grid')
@@ -471,7 +492,7 @@ var drivingViz = function (carMileageNum, drivingData, age) {
         .attr('fill', '#666')
         .style('text-anchor', 'end')
         .text('Annual Miles');
-
+ 
     // append the bars
     var bar = svg.selectAll('.bar')
         .data(drivingDataRevised)
@@ -494,7 +515,7 @@ var drivingViz = function (carMileageNum, drivingData, age) {
             .attr('fill', function(d,i) {
                 return d.firstAge == age?'#98df8a':'#6baed6';
             });
-
+ 
     // append the line to show personal amount
     var personalLine = svg.append('line')
         .attr('class', 'personal-line')
@@ -502,7 +523,7 @@ var drivingViz = function (carMileageNum, drivingData, age) {
         .attr('x2', width)
         .attr('y1', yScale(carMileageNum))
         .attr('y2', yScale(carMileageNum));
-
+ 
     // append the graph legend if their mileage is in the y range
     if (carMileageNum <= 15900) {
         var legend = svg.append('g')
@@ -520,13 +541,13 @@ var drivingViz = function (carMileageNum, drivingData, age) {
             .attr('class', 'legend')
             .text('Your mileage');
     }
-
+ 
     // ensure data accuracy
     function type(d) {
         d.miles = +d.miles;
         return d;
     }
-
+ 
     // create variables for hover effect
     var overall = d3.selectAll('rect#overall'),
         sixtyFive = d3.selectAll('rect#sixty-five'),
@@ -534,10 +555,10 @@ var drivingViz = function (carMileageNum, drivingData, age) {
         thirtyFive = d3.selectAll('rect#thirty-five'),
         twenty = d3.selectAll('rect#twenty'),
         sixteen = d3.selectAll('rect#sixteen');
-
+ 
     // create the tooltip textbox
     var tooltip = createTooltip('#driving-one');
-
+ 
     // create the hover effect
     overall.on('mouseover', function(d,i) {
         overall.style('opacity', '0.7');
@@ -546,12 +567,12 @@ var drivingViz = function (carMileageNum, drivingData, age) {
         tooltip.style('top', Number(d3.select(this).attr('y')) - 52 + 'px');
         return tooltip.style('display', 'block');
     });
-
+ 
     overall.on('mouseout', function(d,i) {
         overall.style('opacity', '1'); 
         return tooltip.style('display', 'none');   
     });
-
+ 
     sixtyFive.on('mouseover', function(d,i) {
         sixtyFive.style('opacity', '0.7');
         tooltip.text(addCommas(d.miles) + ' Average Miles');
@@ -559,12 +580,12 @@ var drivingViz = function (carMileageNum, drivingData, age) {
         tooltip.style('top', Number(d3.select(this).attr('y')) - 52 + 'px');
         return tooltip.style('display', 'block');
     });
-
+ 
     sixtyFive.on('mouseout', function(d,i) {
         sixtyFive.style('opacity', '1'); 
         return tooltip.style('display', 'none');   
     });
-
+ 
     fiftyFive.on('mouseover', function(d,i) {
         fiftyFive.style('opacity', '0.7');
         tooltip.text(addCommas(d.miles) + ' Average Miles');
@@ -572,12 +593,12 @@ var drivingViz = function (carMileageNum, drivingData, age) {
         tooltip.style('top', Number(d3.select(this).attr('y')) - 52 + 'px');
         return tooltip.style('display', 'block');
     });
-
+ 
     fiftyFive.on('mouseout', function(d,i) {
         fiftyFive.style('opacity', '1'); 
         return tooltip.style('display', 'none');   
     });
-
+ 
     thirtyFive.on('mouseover', function(d,i) {
         thirtyFive.style('opacity', '0.7');
         tooltip.text(addCommas(d.miles) + ' Average Miles');
@@ -585,12 +606,12 @@ var drivingViz = function (carMileageNum, drivingData, age) {
         tooltip.style('top', Number(d3.select(this).attr('y')) - 52 + 'px');
         return tooltip.style('display', 'block');
     });
-
+ 
     thirtyFive.on('mouseout', function(d,i) {
         thirtyFive.style('opacity', '1'); 
         return tooltip.style('display', 'none');   
     });
-
+ 
     twenty.on('mouseover', function(d,i) {
         twenty.style('opacity', '0.7');
         tooltip.text(addCommas(d.miles) + ' Average Miles');
@@ -598,12 +619,12 @@ var drivingViz = function (carMileageNum, drivingData, age) {
         tooltip.style('top', Number(d3.select(this).attr('y')) - 52 + 'px');
         return tooltip.style('display', 'block');
     });
-
+ 
     twenty.on('mouseout', function(d,i) {
         twenty.style('opacity', '1'); 
         return tooltip.style('display', 'none');   
     });
-
+ 
     sixteen.on('mouseover', function(d,i) {
         sixteen.style('opacity', '0.7');
         tooltip.text(addCommas(d.miles) + ' Average Miles');
@@ -611,9 +632,10 @@ var drivingViz = function (carMileageNum, drivingData, age) {
         tooltip.style('top', Number(d3.select(this).attr('y')) - 52 + 'px');
         return tooltip.style('display', 'block');
     });
-
+ 
     sixteen.on('mouseout', function(d,i) {
         sixteen.style('opacity', '1'); 
         return tooltip.style('display', 'none');   
     });
+ 
 }
