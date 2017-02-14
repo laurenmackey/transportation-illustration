@@ -301,25 +301,20 @@ var createTooltip = function(id) {
 
 // create the hover-for-info effect
 var createHovers = function(hoverSelection, tooltip, myText, myText2, barChartBool, waffleChartBool) {
-    // if this is a bar chart
-    if (barChartBool) {
-        // create the hover in effect
-        hoverSelection.on('mouseover', function(d,i) {
-            hoverSelection.style('opacity', '0.7');
+    // create the hover in effect
+    hoverSelection.on('mouseover', function(d,i) {
+        hoverSelection.style('opacity', '0.7');
+        // if this is a bar chart
+        if (barChartBool) {
             tooltip.text(addCommas(d.y) + myText);
             tooltip.style('left', Number(d3.select(this).attr('x')) + 64 + 'px');
             tooltip.style('top', Number(d3.select(this).attr('y')) - 52 + 'px');
-            return tooltip.style('display', 'block');
-        });
-    } else { 
-        // create the hover in effect
-        hoverSelection.on('mouseover', function(d,i) {
-            hoverSelection.style('opacity', '0.7');
+        } else {
             tooltip.text(myText + d.percent + myText2);
             tooltip.style('left', (d3.select(this).attr('x')) + 'px');
-            return tooltip.style('display', 'block');
-        });
-    }
+        }
+        return tooltip.style('display', 'block');
+    }); 
  
     // create the hover out effect
     hoverSelection.on('mouseout', function(d,i) {
