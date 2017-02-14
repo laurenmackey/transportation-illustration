@@ -55,9 +55,12 @@ var variables = function () {
         l,
         m,
         n,
+        o,
+        p,
         pass = true,
         passTwo = true,
         milesTotal,
+        waffleDataClass = ['car', 'bicycle', 'walk', 'public'],
         drivingData = ['16', 7624, '20', 15098, '35', 15291, '55', 11972, '65', 7646, 'total', 13476];
 
     // hide any previously generated waffle chart paragraph info and other charts in case user went back and changed
@@ -108,7 +111,7 @@ var variables = function () {
 
     // if they use a car, push data to the main array for the visualization page, plus generate and send variables for dynamic text
     if (carTransit == true) {        
-        waffleData.push({'method': 'car', 'miles': carMileage});
+        waffleData.push({'method': waffleDataClass[0], 'miles': carMileage});
         carMileageNum = carMileage;        
 
         // if they're under 16, no need to dynamically generate text
@@ -142,7 +145,7 @@ var variables = function () {
 
     // if they use a bicycle, push data to the main array for the visualization page, plus generate and send variables for dynamic text
     if (bicycleTransit == true) {
-        waffleData.push({'method': 'bicycle', 'miles': bicycleMileage});
+        waffleData.push({'method': waffleDataClass[1], 'miles': bicycleMileage});
         bicycleMileage = addCommas(bicycleMileage);
         document.getElementById('waffle-bicycle').textContent = bicycleMileage;
         show('waffle-bicycle-paragraph');
@@ -150,7 +153,7 @@ var variables = function () {
 
     // if they walk, push data to the main array for the visualization page, plus generate and send variables for dynamic text
     if (walkTransit == true) {
-        waffleData.push({'method': 'walk', 'miles': walkMileage});
+        waffleData.push({'method': waffleDataClass[2], 'miles': walkMileage});
         walkMileage = addCommas(walkMileage);
         document.getElementById('waffle-walk').textContent = walkMileage;
         show('waffle-walk-paragraph');
@@ -158,7 +161,7 @@ var variables = function () {
 
     // if they use public transit, push data to the main array for the visualization page, plus generate and send variables for dynamic text
     if (publicTransit == true) {
-        waffleData.push({'method': 'public', 'miles': publicMileage});
+        waffleData.push({'method': waffleDataClass[3], 'miles': publicMileage});
         publicMileage = addCommas(publicMileage);
         document.getElementById('waffle-public').textContent = publicMileage;
         show('waffle-public-paragraph');
@@ -224,18 +227,49 @@ var variables = function () {
             document.getElementById('waffle-car').textContent = carMileage;
             show('waffle-car-paragraph');
         }
-        waffleChart(milesTotal, waffleData);
+
+        // create an array for to be able to create hover effect for waffle viz, plus correlating hover text
+        var waffleDataClassHover = [],
+            waffleDataHoverDisplay = ['Car: \n', 'Bicycle: \n', 'Walk: \n', 'Public Transit: \n'];
+
+        // call waffleChart to create the viz
+        var tooltipWaffleReturn = waffleChart(milesTotal, waffleData);
+
+        // create array of selections for hover effect
+        for (o = 0; o < waffleDataClass.length; o++) {
+            waffleDataClassHover[o] = d3.selectAll('rect.' + waffleDataClass[o]);
+            createHovers(waffleDataClassHover[o], tooltipWaffleReturn, waffleDataHoverDisplay[o], ' of your transit', false, true);
+        }
     }
     
-    // if they drive, dynamically generate text then call drivingAgeBar
+    // if they drive, show the corresponding viz's
     if (carTransit) {
+        // dynamically generate text
         document.getElementById('driving-car').textContent = carMileage;
         document.getElementById('age-percent').textContent = carAgePercent;
         document.getElementById('age-moreless').textContent = ageMoreLess;
         document.getElementById('total-percent').textContent = carTotalPercent;
         document.getElementById('total-moreless').textContent = totalMoreLess;
-        drivingViz(carMileageNum, drivingData, age);        
-    }
+
+        // show first driving viz and paragraph and hide buffer div
+        show('driving-paragraph-one');
+        show('driving-paragraph-div-one');
+        show('driving-one');
+        hide('buffer');
+
+        // create an array for svg element id's to be able to create hover effect for first driving viz
+        var drivingDataIdentification = ['sixteen', 'twenty', 'thirty-five', 'fifty-five', 'sixty-five', 'overall'],
+            drivingDataIdentificationHover = [];
+
+        // call drivingAgeBar to format driving data and then call the barChart function to create the viz
+        var tooltipDrivingAgeBarReturn = drivingAgeBar(drivingData, carMileageNum, age, drivingDataIdentification);
+
+        // create array of selections for hover effect
+        for (p = 0; p < drivingDataIdentification.length; p++) {
+            drivingDataIdentificationHover[p] = d3.selectAll('rect#' + drivingDataIdentification[p]);
+            createHovers(drivingDataIdentificationHover[p], tooltipDrivingAgeBarReturn, ' Average Miles', '', true, false);
+        }        
+    } 
 }
 
 // add commas to a number
@@ -263,6 +297,35 @@ var createTooltip = function(id) {
         .append('div')
         .attr('class', 'tooltip-stuff')
     return tooltip;
+}
+
+// create the hover-for-info effect
+var createHovers = function(hoverSelection, tooltip, myText, myText2, barChartBool, waffleChartBool) {
+    // if this is a bar chart
+    if (barChartBool) {
+        // create the hover in effect
+        hoverSelection.on('mouseover', function(d,i) {
+            hoverSelection.style('opacity', '0.7');
+            tooltip.text(addCommas(d.y) + myText);
+            tooltip.style('left', Number(d3.select(this).attr('x')) + 64 + 'px');
+            tooltip.style('top', Number(d3.select(this).attr('y')) - 52 + 'px');
+            return tooltip.style('display', 'block');
+        });
+    } else { 
+        // create the hover in effect
+        hoverSelection.on('mouseover', function(d,i) {
+            hoverSelection.style('opacity', '0.7');
+            tooltip.text(myText + d.percent + myText2);
+            tooltip.style('left', (d3.select(this).attr('x')) + 'px');
+            return tooltip.style('display', 'block');
+        });
+    }
+ 
+    // create the hover out effect
+    hoverSelection.on('mouseout', function(d,i) {
+        hoverSelection.style('opacity', '1'); 
+        return tooltip.style('display', 'none');   
+    });
 }
 
 // generate the waffle chart
@@ -333,105 +396,69 @@ var waffleChart = function (milesTotal, waffleData) {
         .text('One Square = '+ addCommas(round(unitsPerBox, 1)) + ' Miles')
         .attr('class', 'legend');
 
-    // create variables for hover effect
-    var carSelection = d3.selectAll('rect.car'),
-        bicycleSelection = d3.selectAll('rect.bicycle'),
-        walkSelection = d3.selectAll('rect.walk'),
-        publicSelection = d3.selectAll('rect.public');
-
     // create the tooltip textbox
-    var tooltip = createTooltip('#waffle');
-
-    // create the hover effect
-    carSelection.on('mouseover', function(d,i) {
-        carSelection.style('opacity', '0.7');
-        tooltip.text('Car: \n' + d.percent + ' of your transit');
-        //carSelection.attr('x') returns the x value for the first rect
-        tooltip.style('left', (d3.select(this).attr('x')) + 'px');
-        return tooltip.style('display', 'block');
-    });
-
-    carSelection.on('mouseout', function(d,i) {
-        carSelection.style('opacity', '1'); 
-        return tooltip.style('display', 'none');   
-    });
-
-    bicycleSelection.on('mouseover', function(d,i) {
-        bicycleSelection.style('opacity', '0.7');
-        tooltip.text('Bicycle: \n' + d.percent + ' of your transit');
-        tooltip.style('left', (d3.select(this).attr('x')) + 'px');
-        return tooltip.style('display', 'block');
-    });
-
-    bicycleSelection.on('mouseout', function(d,i) {
-        bicycleSelection.style('opacity', '1');
-        return tooltip.style('display', 'none');     
-    });
-
-    walkSelection.on('mouseover', function(d,i) {
-        walkSelection.style('opacity', '0.7');
-        tooltip.text('Walk: \n' + d.percent + ' of your transit');
-        tooltip.style('left', (d3.select(this).attr('x')) + 'px');
-        return tooltip.style('display', 'block');
-    });
-
-    walkSelection.on('mouseout', function(d,i) {
-        walkSelection.style('opacity', '1'); 
-        return tooltip.style('display', 'none');    
-    });
-
-    publicSelection.on('mouseover', function(d,i) {
-        publicSelection.style('opacity', '0.7');
-        tooltip.text('Public Transit: \n' + d.percent + ' of your transit');
-        tooltip.style('left', (d3.select(this).attr('x')) + 'px');
-        return tooltip.style('display', 'block');
-    });
-
-    publicSelection.on('mouseout', function(d,i) {
-        publicSelection.style('opacity', '1');
-        return tooltip.style('display', 'none');     
-    });
+    var tooltipWaffle = createTooltip('#waffle');
+    return tooltipWaffle;
 }
 
-// generate the bar chart
-var drivingViz = function (carMileageNum, drivingData, age) {
-    show('driving-paragraph-one');
-    hide('buffer');
-    show('driving-one');
- 
+// re-format driving data to be able to be used in charts
+var drivingAgeBar = function(drivingData, carMileageNum, age, drivingDataIdentification) {
     // declare variables
     var drivingDataAges = [],
-        drivingDataIdentification = [],
         drivingDataRevised = [],
+        numberOfYTicks = 7,
         i,
         j = 1,
-        k = 0,
-        numberOfYTicks = 7,
-        margin = {top: 10, right: 15, bottom: 45, left: 75},
-        width = 515 - margin.left - margin.right,
-        height = 335 - margin.top - margin.bottom;
- 
+        k = 0;
+
     // create an array of correctly formatted ages to create a revised drivingData array
     drivingDataAges = ['16-19', '20-34', '35-54', '55-64', '65+', 'Overall'];
-    drivingDataIdentification = ['sixteen', 'twenty', 'thirty-five', 'fifty-five', 'sixty-five', 'overall'];
  
     // create a revised drivingData array of objects with correct ages, mileage amounts, and identifications
+    // here, x is age and y is miles
     for (i = 0; i < drivingDataAges.length; i++) {
-        drivingDataRevised.push({'firstAge': drivingData[k], 'age': drivingDataAges[i], 'miles': drivingData[j], 'identification': drivingDataIdentification[i]});
+        drivingDataRevised.push({'first': drivingData[k], 'x': drivingDataAges[i], 'y': drivingData[j], 'identification': drivingDataIdentification[i]});
         j = j + 2;
         k = k + 2;
     }
+
+    var tooltipDrivingAgeBar = barChart('driving-one', 
+                                 numberOfYTicks, 
+                                 drivingDataRevised, 
+                                 'Annual Miles', 
+                                 age, 
+                                 carMileageNum, 
+                                 15900, 
+                                 'Your mileage');
+
+    return tooltipDrivingAgeBar;
+}
+
+// generate the bar chart
+var barChart = function (chartShow,  
+                         numberOfYTicks, 
+                         myData, 
+                         xText, 
+                         highlightValue, 
+                         personalLineNum, 
+                         graphRange, 
+                         legendText) {
+ 
+    // declare variables
+    var margin = {top: 10, right: 15, bottom: 45, left: 75},
+        width = 515 - margin.left - margin.right,
+        height = 335 - margin.top - margin.bottom;
  
     // create x and y scale functions that map each value in the domain to a value in the specified range
     var xScale = d3.scale.ordinal()
-        .domain(drivingDataRevised.map(function(d) {
-            return d.age;
+        .domain(myData.map(function(d) {
+            return d.x;
         }))
         .rangeRoundBands([0, width], 0.3);
  
     var yScale = d3.scale.linear()
-        .domain([0, d3.max(drivingDataRevised, function(d) {
-            return d.miles;
+        .domain([0, d3.max(myData, function(d) {
+            return d.y;
         })])
         .range([height, 0]);
  
@@ -445,10 +472,10 @@ var drivingViz = function (carMileageNum, drivingData, age) {
         .orient('left');
  
     // prevent multiple svg's from being created
-    d3.select('#driving-one').selectAll('svg').remove();
+    d3.select('#' + chartShow).selectAll('svg').remove();
     
     // append an svg to the div
-    var svg = d3.select('#driving-one')
+    var svg = d3.select('#' + chartShow)
         .append('svg')
             .attr('width', width + margin.left + margin.right)
             .attr('height', height + margin.top + margin.bottom)
@@ -491,11 +518,11 @@ var drivingViz = function (carMileageNum, drivingData, age) {
         .attr('dx', '5.8em')
         .attr('fill', '#666')
         .style('text-anchor', 'end')
-        .text('Annual Miles');
+        .text(xText);
  
     // append the bars
     var bar = svg.selectAll('.bar')
-        .data(drivingDataRevised)
+        .data(myData)
         .enter()
         .append('rect')
             .attr('class', 'bar')
@@ -503,17 +530,17 @@ var drivingViz = function (carMileageNum, drivingData, age) {
                 return d.identification;
             })
             .attr('x', function(d) {
-                return xScale(d.age);
+                return xScale(d.x);
             })
             .attr('y', function(d) {
-                return yScale(d.miles);
+                return yScale(d.y);
             })
             .attr('height', function(d) {
-                return height - yScale(d.miles);
+                return height - yScale(d.y);
             })
             .attr('width', xScale.rangeBand())
             .attr('fill', function(d,i) {
-                return d.firstAge == age?'#98df8a':'#6baed6';
+                return d.first == highlightValue?'#98df8a':'#6baed6';
             });
  
     // append the line to show personal amount
@@ -521,11 +548,11 @@ var drivingViz = function (carMileageNum, drivingData, age) {
         .attr('class', 'personal-line')
         .attr('x1', 0)
         .attr('x2', width)
-        .attr('y1', yScale(carMileageNum))
-        .attr('y2', yScale(carMileageNum));
+        .attr('y1', yScale(personalLineNum))
+        .attr('y2', yScale(personalLineNum));
  
     // append the graph legend if their mileage is in the y range
-    if (carMileageNum <= 15900) {
+    if (personalLineNum <= graphRange) {
         var legend = svg.append('g')
             .attr('transform', 'translate(-80, 0)');
     
@@ -539,103 +566,16 @@ var drivingViz = function (carMileageNum, drivingData, age) {
             .attr('x', 432)
             .attr('y', 5)
             .attr('class', 'legend')
-            .text('Your mileage');
+            .text(legendText);
     }
  
     // ensure data accuracy
     function type(d) {
-        d.miles = +d.miles;
+        d.y = +d.y;
         return d;
     }
  
-    // create variables for hover effect
-    var overall = d3.selectAll('rect#overall'),
-        sixtyFive = d3.selectAll('rect#sixty-five'),
-        fiftyFive = d3.selectAll('rect#fifty-five'),
-        thirtyFive = d3.selectAll('rect#thirty-five'),
-        twenty = d3.selectAll('rect#twenty'),
-        sixteen = d3.selectAll('rect#sixteen');
- 
-    // create the tooltip textbox
-    var tooltip = createTooltip('#driving-one');
- 
-    // create the hover effect
-    overall.on('mouseover', function(d,i) {
-        overall.style('opacity', '0.7');
-        tooltip.text(addCommas(d.miles) + ' Average Miles');
-        tooltip.style('left', Number(d3.select(this).attr('x')) + 64 + 'px');
-        tooltip.style('top', Number(d3.select(this).attr('y')) - 52 + 'px');
-        return tooltip.style('display', 'block');
-    });
- 
-    overall.on('mouseout', function(d,i) {
-        overall.style('opacity', '1'); 
-        return tooltip.style('display', 'none');   
-    });
- 
-    sixtyFive.on('mouseover', function(d,i) {
-        sixtyFive.style('opacity', '0.7');
-        tooltip.text(addCommas(d.miles) + ' Average Miles');
-        tooltip.style('left', Number(d3.select(this).attr('x')) + 64 + 'px');
-        tooltip.style('top', Number(d3.select(this).attr('y')) - 52 + 'px');
-        return tooltip.style('display', 'block');
-    });
- 
-    sixtyFive.on('mouseout', function(d,i) {
-        sixtyFive.style('opacity', '1'); 
-        return tooltip.style('display', 'none');   
-    });
- 
-    fiftyFive.on('mouseover', function(d,i) {
-        fiftyFive.style('opacity', '0.7');
-        tooltip.text(addCommas(d.miles) + ' Average Miles');
-        tooltip.style('left', Number(d3.select(this).attr('x')) + 64 + 'px');
-        tooltip.style('top', Number(d3.select(this).attr('y')) - 52 + 'px');
-        return tooltip.style('display', 'block');
-    });
- 
-    fiftyFive.on('mouseout', function(d,i) {
-        fiftyFive.style('opacity', '1'); 
-        return tooltip.style('display', 'none');   
-    });
- 
-    thirtyFive.on('mouseover', function(d,i) {
-        thirtyFive.style('opacity', '0.7');
-        tooltip.text(addCommas(d.miles) + ' Average Miles');
-        tooltip.style('left', Number(d3.select(this).attr('x')) + 64 + 'px');
-        tooltip.style('top', Number(d3.select(this).attr('y')) - 52 + 'px');
-        return tooltip.style('display', 'block');
-    });
- 
-    thirtyFive.on('mouseout', function(d,i) {
-        thirtyFive.style('opacity', '1'); 
-        return tooltip.style('display', 'none');   
-    });
- 
-    twenty.on('mouseover', function(d,i) {
-        twenty.style('opacity', '0.7');
-        tooltip.text(addCommas(d.miles) + ' Average Miles');
-        tooltip.style('left', Number(d3.select(this).attr('x')) + 64 + 'px');
-        tooltip.style('top', Number(d3.select(this).attr('y')) - 52 + 'px');
-        return tooltip.style('display', 'block');
-    });
- 
-    twenty.on('mouseout', function(d,i) {
-        twenty.style('opacity', '1'); 
-        return tooltip.style('display', 'none');   
-    });
- 
-    sixteen.on('mouseover', function(d,i) {
-        sixteen.style('opacity', '0.7');
-        tooltip.text(addCommas(d.miles) + ' Average Miles');
-        tooltip.style('left', Number(d3.select(this).attr('x')) + 64 + 'px');
-        tooltip.style('top', Number(d3.select(this).attr('y')) - 52 + 'px');
-        return tooltip.style('display', 'block');
-    });
- 
-    sixteen.on('mouseout', function(d,i) {
-        sixteen.style('opacity', '1'); 
-        return tooltip.style('display', 'none');   
-    });
- 
+    // create the tooltip textbox and pass it back to be used for hover effect
+    var tooltipBar = createTooltip('#' + chartShow);
+    return tooltipBar;
 }
