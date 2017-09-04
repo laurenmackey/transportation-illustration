@@ -1,4 +1,7 @@
-/* Style notes: broken up by page and sometimes subparts of the page, alphabetized within each commented area*/
+/* 
+** Note: broken up by page and sometimes subparts of the page, 
+** alphabetized within each commented area 
+*/
 
 /* Overall styling */
 body {
@@ -23,8 +26,12 @@ Html, body, div {
     display: none;
 }
 
-.page-header {
-    margin-top: .8%;
+.margin-top-2 {
+    margin-top: 2%;
+}
+
+.margin-top-4 {
+    margin-top: 4%;
 }
 
 /* Intro page styling */
