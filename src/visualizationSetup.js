@@ -39,29 +39,37 @@ var variables = function () {
         bicycleWork = false,
         carAgePercent,
         carTotalPercent,
+        carStatePercent,
         ageMoreLess,
         totalMoreLess,
+        stateMoreLess,
         k,
         l,
         m,
         n,
         o,
         p,
+        q,
         pass = true,
         passTwo = true,
         milesTotal,
+        stateMiles,
         waffleDataClass = ['car', 'bicycle', 'walk', 'public'],
-        drivingData = ['16', 7624, '20', 15098, '35', 15291, '55', 11972, '65', 7646, 'total', 13476];
+        drivingData = ['16', 7624, '20', 15098, '35', 15291, '55', 11972, '65', 7646, 'total', 13476],
+        stateData = STATEDATA;
 
     // hide any previous waffle paragraph info and other charts in case user went back and changed
     hide('waffle-car-paragraph');
     hide('waffle-bicycle-paragraph');
     hide('waffle-walk-paragraph');
     hide('waffle-public-paragraph');
-    hide('driving-title-one');
+    hide('driving-title');
     hide('driving-paragraph-one');
     hide('driving-one');
     hide('driving-paragraph-div-one');
+    hide('driving-paragraph-two');
+    hide('driving-two');
+    hide('driving-paragraph-div-two');
     show('buffer');
 
     // set mileage numbers for each transit type, converted to annual number
@@ -116,6 +124,23 @@ var variables = function () {
         } else {
             totalMoreLess = 'more';
         }
+
+        /// generate dynamic text for state comparison
+        for (q = 0; q < stateData.length; q++) {
+            if (stateData[q].state == state)
+            {
+                stateMiles = stateData[q].averageDrivingMiles;
+            }
+        }
+    
+        if (carMileage < stateMiles) {
+            stateMoreLess = 'less';
+        } else {
+            stateMoreLess = 'more';
+        }
+    
+        carStatePercent = addCommas(Math.floor(Math.abs((stateMiles - carMileage) / stateMiles * 100)));
+        carStatePercent = String(carStatePercent) + '%';
     }
 
     // push bike data to main array, plus create variables for dynamic text
@@ -227,12 +252,17 @@ var variables = function () {
         document.getElementById('age-moreless').textContent = ageMoreLess;
         document.getElementById('total-percent').textContent = carTotalPercent;
         document.getElementById('total-moreless').textContent = totalMoreLess;
+        document.getElementById('state-percent').textContent = carStatePercent;
+        document.getElementById('state-moreless').textContent = stateMoreLess;
 
         // show first driving viz and paragraph and hide buffer div
-        show('driving-title-one');
+        show('driving-title');
         show('driving-paragraph-one');
         show('driving-paragraph-div-one');
         show('driving-one');
+        show('driving-paragraph-two');
+        show('driving-paragraph-div-two');
+        show('driving-two');
         hide('buffer');
 
         // create an array for svg element id's to create hover effect for first driving viz
