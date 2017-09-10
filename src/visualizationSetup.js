@@ -5,11 +5,15 @@ var variables = function () {
     // obtain all variables from profile page
     var age = document.getElementById('age').value,
         county = document.getElementById('county').value,
-        state = document.getElementById('state').value,
         transitTypes = document.getElementsByClassName('transit-types'),
         transitMiles = document.getElementsByClassName('transit-miles'),
         work = document.getElementsByClassName('work'),
         commute = document.getElementById('commute').value;
+
+    // get the index of where the state starts and obtain state variable
+    var commaLocation = county.search(",");
+    var stateLocation = commaLocation + 2;
+    var state = county.substr(stateLocation, (county.length - stateLocation + 1));
 
     // declare variables to help store inputs
     var transitLength = transitTypes.length / 2,
@@ -54,6 +58,7 @@ var variables = function () {
     hide('waffle-bicycle-paragraph');
     hide('waffle-walk-paragraph');
     hide('waffle-public-paragraph');
+    hide('driving-title-one');
     hide('driving-paragraph-one');
     hide('driving-one');
     hide('driving-paragraph-div-one');
@@ -155,7 +160,7 @@ var variables = function () {
     }
 
     // yell at user if a field is blank
-    if (age == 'Select age range' || !county || !state || !transitTypes[1].value 
+    /*if (age == 'Select age range' || !county || !transitTypes[1].value 
         || !transitMiles[0].value || !work[1].value || commute == 'Select commute time') {
         pass = false;
         show('field-alert');
@@ -188,7 +193,7 @@ var variables = function () {
             hide('mileage-alert');
             hide('field-alert');
         }
-    }
+    }*/
 
     // if all is well, hide profile, show visualization page on Next click, plus show waffle viz
     if (pass) {
@@ -224,6 +229,7 @@ var variables = function () {
         document.getElementById('total-moreless').textContent = totalMoreLess;
 
         // show first driving viz and paragraph and hide buffer div
+        show('driving-title-one');
         show('driving-paragraph-one');
         show('driving-paragraph-div-one');
         show('driving-one');
@@ -276,7 +282,8 @@ var drivingAgeBar = function(drivingData, carMileageNum, age, drivingDataIdentif
                                  age, 
                                  carMileageNum, 
                                  15900, 
-                                 'Your mileage');
+                                 'Your mileage',
+                                 'Source: U.S. Dept. of Transportation');
 
     return tooltipDrivingAgeBar;
 }

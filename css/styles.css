@@ -22,16 +22,16 @@ Html, body, div {
     margin-top: 2%;
 }
 
-.none {
-    display: none;
-}
-
 .margin-top-2 {
     margin-top: 2%;
 }
 
 .margin-top-4 {
     margin-top: 4%;
+}
+
+.none {
+    display: none;
 }
 
 /* Intro page styling */
@@ -167,12 +167,23 @@ hr {
     fill: #de9ed6;
 }
 
+.citation {
+    fill: #666;
+    font-size: 12px;
+}
+
 .not-first {
     margin-top: 4%;
 }
 
 .paragraph {
     font-size: 17.5px;
+    margin-top: 3%;
+}
+
+
+.paragraph-larger {
+    font-size: 20.5px;
     margin-top: 3%;
 }
 

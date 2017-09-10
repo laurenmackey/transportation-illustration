@@ -84,7 +84,8 @@ var barChart = function (chartShow,
                          highlightValue, 
                          personalLineNum, 
                          graphRange, 
-                         legendText) {
+                         legendText,
+                         citationText) {
  
     // declare variables
     var margin = {top: 10, right: 15, bottom: 45, left: 75},
@@ -211,6 +212,13 @@ var barChart = function (chartShow,
             .attr('class', 'legend')
             .text(legendText);
     }
+
+    // append the bottom legend
+    var bottomLegend = svg.append('g')
+        .attr('transform', 'translate(0, 319)')
+        .append('text')
+        .attr('class', 'citation')
+        .text(citationText);
  
     // ensure data accuracy
     function type(d) {
