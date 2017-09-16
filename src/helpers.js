@@ -80,3 +80,43 @@ var createHovers = function(hoverSelection, tooltip, myText, myText2,
         return tooltip.style('display', 'none');   
     });
 }
+
+var parseStateData = function(state, carMileage, stateJson, geoJson) {
+    var stateMiles,
+        stateMoreLess,
+        carStatePercent;
+
+    // generate dynamic text for state comparison
+    for (var a = 0; a < stateJson.length; a++) {
+        if (stateJson[a].state == state)
+        {
+            stateMiles = stateJson[a].averageDrivingMiles;
+            stateMiles.toString();
+        }
+    }
+    
+    if (carMileage < stateMiles) {
+        stateMoreLess = 'less';
+    } else {
+        stateMoreLess = 'more';
+    }
+
+    carStatePercent = addCommas(Math.floor(Math.abs((stateMiles - carMileage) / stateMiles * 100)));
+    carStatePercent = String(carStatePercent) + '%';
+
+    document.getElementById('state-percent').textContent = carStatePercent;
+    document.getElementById('state-moreless').textContent = stateMoreLess;
+
+    // add state average mileage from stateJson to geoJson
+    for (var b = 0; b < geoJson.features.length; b++) {
+        var geoJsonState = geoJson.features[b].properties.name;
+
+        for (var c = 0; c < stateJson.length; c++) {
+            if (geoJsonState == stateJson[c].state) {
+                geoJson.features[b].properties.average_miles = stateJson[c].averageDrivingMiles;
+            }
+        }
+    }
+}
+
+

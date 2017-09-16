@@ -1,7 +1,18 @@
 /*
+** parse all json data
+*/
+var parseAndRender = function() {
+    d3.json('stateData.json', function(stateJson) {
+        d3.json('us-states.json', function(geoJson) {
+            variables(stateJson, geoJson);
+        })
+    })
+}
+
+/*
 ** generate all viz variables from user input
 */
-var variables = function () {
+var variables = function (stateJson, geoJson) {
     // obtain all variables from profile page
     var age = document.getElementById('age').value,
         county = document.getElementById('county').value,
@@ -39,10 +50,8 @@ var variables = function () {
         bicycleWork = false,
         carAgePercent,
         carTotalPercent,
-        carStatePercent,
         ageMoreLess,
         totalMoreLess,
-        stateMoreLess,
         k,
         l,
         m,
@@ -50,13 +59,12 @@ var variables = function () {
         o,
         p,
         q,
+        r,
         pass = true,
         passTwo = true,
         milesTotal,
-        stateMiles,
         waffleDataClass = ['car', 'bicycle', 'walk', 'public'],
-        drivingData = ['16', 7624, '20', 15098, '35', 15291, '55', 11972, '65', 7646, 'total', 13476],
-        stateData = STATEDATA;
+        drivingData = ['16', 7624, '20', 15098, '35', 15291, '55', 11972, '65', 7646, 'total', 13476];
 
     // hide any previous waffle paragraph info and other charts in case user went back and changed
     hide('waffle-car-paragraph');
@@ -124,23 +132,6 @@ var variables = function () {
         } else {
             totalMoreLess = 'more';
         }
-
-        /// generate dynamic text for state comparison
-        for (q = 0; q < stateData.length; q++) {
-            if (stateData[q].state == state)
-            {
-                stateMiles = stateData[q].averageDrivingMiles;
-            }
-        }
-    
-        if (carMileage < stateMiles) {
-            stateMoreLess = 'less';
-        } else {
-            stateMoreLess = 'more';
-        }
-    
-        carStatePercent = addCommas(Math.floor(Math.abs((stateMiles - carMileage) / stateMiles * 100)));
-        carStatePercent = String(carStatePercent) + '%';
     }
 
     // push bike data to main array, plus create variables for dynamic text
@@ -246,14 +237,15 @@ var variables = function () {
     
     // if they drive, show the corresponding viz's
     if (carTransit) {
+        // parse and link state and geo data jsons
+        parseStateData(state, carMileageNum, stateJson, geoJson);
+
         // dynamically generate text
         document.getElementById('driving-car').textContent = carMileage;
         document.getElementById('age-percent').textContent = carAgePercent;
         document.getElementById('age-moreless').textContent = ageMoreLess;
         document.getElementById('total-percent').textContent = carTotalPercent;
         document.getElementById('total-moreless').textContent = totalMoreLess;
-        document.getElementById('state-percent').textContent = carStatePercent;
-        document.getElementById('state-moreless').textContent = stateMoreLess;
 
         // show first driving viz and paragraph and hide buffer div
         show('driving-title');
@@ -277,7 +269,19 @@ var variables = function () {
         for (p = 0; p < drivingDataIdentification.length; p++) {
             drivingDataIdentificationHover[p] = d3.selectAll('rect#' + drivingDataIdentification[p]);
             createHovers(drivingDataIdentificationHover[p], tooltipDrivingAgeBarReturn, ' Average Miles', '', true, false);
-        }        
+        }   
+
+        // create an array for svg element id's to create hover effect for heat map driving viz
+        var stateDataIdentificationHover = [];
+
+        // call heatMap function to create the viz
+        var tooltipDrivingStateMapReturn = heatMap('driving-two', state, carMileageNum, stateJson, geoJson);
+
+        // create array of selections for hover effect
+        /*for (r = 0; r < stateData.length; r++) {
+            stateDataIdentificationHover[r] = d3.selectAll('rect#' + stateDataIdentification[r]);
+            createHovers(stateDataIdentificationHover[r], tooltipDrivingStateMapReturn, ' Average Miles', '', false, false);
+        } */      
     } 
 }
 

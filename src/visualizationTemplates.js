@@ -230,3 +230,56 @@ var barChart = function (chartShow,
     var tooltipBar = createTooltip('#' + chartShow);
     return tooltipBar;
 }
+
+/*
+** generate the heat map
+*/
+var heatMap = function (chartShow,
+                        state, 
+                        carMileageNum, 
+                        stateJson, 
+                        geoJson) {
+    // declare variables
+    var margin = {top: 10, right: 15, bottom: 45, left: 75},
+        width = 515 - margin.left - margin.right,
+        height = 335 - margin.top - margin.bottom;
+
+    // prevent multiple svg's from being created
+    d3.select('#' + chartShow).selectAll('svg').remove();
+
+    var svg = d3.select('#' + chartShow)
+        .append('svg')
+            .attr('width', width + margin.left + margin.right)
+            .attr('height', height + margin.top + margin.bottom);
+
+    var projection = d3.geo.albersUsa()
+        .translate([width/2, height/2])
+        .scale([600]);
+
+    var path = d3.geo.path()
+            .projection(projection);
+
+    var minMiles = d3.min(stateJson, function(d) { return d.averageDrivingMiles; }),
+        maxMiles = d3.max(stateJson, function(d) { return d.averageDrivingMiles; });
+
+    var color = d3.scale.linear()
+            .domain([minMiles, maxMiles])
+            // green, peach, blue, purple 
+            //'#98df8a', '#fdd0a2', '#6baed6', '#de9ed6'
+            // can try multiple color gradient like ny times
+            .range(['#98df8a', '#d62728']);
+        
+    svg.selectAll('path')
+        .data(geoJson.features)
+        .enter()
+        .append('path')
+        .attr('d', path)
+        .style('stroke', '#fff')
+        .style('stroke-width', '1')
+        .style('fill', function(d) {
+            var value = d.properties.average_miles;
+            return color(value);
+        });
+}
+
+
