@@ -139,6 +139,16 @@ Html, body, div {
     font-weight: bold;
 }
 
+.citation {
+    fill: #666;
+    font-size: 12px;
+}
+
+.citation-larger {
+    fill: #666;
+    font-size: 13.5px;
+}
+
 #driving-paragraph-one {
     margin-top: 19%;
 }
@@ -165,11 +175,6 @@ hr {
 
 .legend-line {
     fill: #de9ed6;
-}
-
-.citation {
-    fill: #666;
-    font-size: 12px;
 }
 
 .not-first {

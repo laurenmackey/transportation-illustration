@@ -238,15 +238,18 @@ var heatMap = function (chartShow,
                         state, 
                         carMileageNum, 
                         stateJson, 
-                        geoJson) {
+                        geoJson,
+                        colorScheme) {
     // declare variables
     var margin = {top: 10, right: 15, bottom: 45, left: 75},
         width = 515 - margin.left - margin.right,
-        height = 335 - margin.top - margin.bottom;
+        height = 335 - margin.top - margin.bottom,
+        purple = ['#f1d8ee', '#e4b1de', '#b17eab', '#6f4f6b', '#422f40'];
 
     // prevent multiple svg's from being created
     d3.select('#' + chartShow).selectAll('svg').remove();
 
+    // add the svg and projection
     var svg = d3.select('#' + chartShow)
         .append('svg')
             .attr('width', width + margin.left + margin.right)
@@ -259,16 +262,24 @@ var heatMap = function (chartShow,
     var path = d3.geo.path()
             .projection(projection);
 
+    // calculate the domain of the heatmap
     var minMiles = d3.min(stateJson, function(d) { return d.averageDrivingMiles; }),
         maxMiles = d3.max(stateJson, function(d) { return d.averageDrivingMiles; });
 
-    var color = d3.scale.linear()
-            .domain([minMiles, maxMiles])
-            // green, peach, blue, purple 
-            //'#98df8a', '#fdd0a2', '#6baed6', '#de9ed6'
-            // can try multiple color gradient like ny times
-            .range(['#98df8a', '#d62728']);
+    // reset minMiles if personal mileage is less
+    if (minMiles > carMileageNum) {
+        minMiles = carMileageNum;
+    }
+
+    // set the colors
+    var color = d3.scale.quantize()
+            .domain([minMiles, maxMiles]);
+
+    if (colorScheme == 'purple') {
+        color.range(purple);
+    }
         
+    // draw the map
     svg.selectAll('path')
         .data(geoJson.features)
         .enter()
@@ -280,6 +291,57 @@ var heatMap = function (chartShow,
             var value = d.properties.average_miles;
             return color(value);
         });
+
+    // make the legend - set the gradient
+    var linearGradient = svg.append('defs')
+        .append('linearGradient')
+        .attr('id', 'linear-gradient')
+        .attr('x1', '0%')
+        .attr('y1', '0%')
+        .attr('x2', '100%')
+        .attr('y2', '0%');
+
+    linearGradient.selectAll('stop')
+        .data(color.range())
+        .enter().append('stop')
+        .attr('offset', function(d,i) { return i/(color.range().length-1);})
+        .attr('stop-color', function(d) { return d; });
+
+    // make the legend - create the rect and fill with gradient
+    var legendWidth = 175,
+        legendHeight = 22;
+
+    var legend = svg.append('g')
+        .attr('transform', 'translate(250, 300)');
+
+    legend.append('rect')
+        .attr('width', legendWidth)
+        .attr('height', legendHeight)
+        .attr('transform', 'translate(-20, 0)')
+        .attr('fill', 'url(#linear-gradient)');
+
+    // add the title to the legend
+    legend.append('text')
+        .attr('class', 'citation-larger')
+        .attr('x', 68)
+        .attr('y', -8)
+        .style('text-anchor', 'middle')
+        .text('Average Annual Miles');
+
+    // add labeled ticks to the legend
+    var xScale = d3.scale.linear()
+        .range([-legendWidth/2, legendWidth/2])
+        .domain([minMiles, maxMiles]);
+    
+    var xAxis = d3.svg.axis()
+        .orient('bottom')
+        .ticks(4)
+        .scale(xScale);
+    
+    legend.append('g')
+        .attr('class', 'citation')
+        .attr('transform', 'translate(80, 15)')
+        .call(xAxis);
 }
 
 
