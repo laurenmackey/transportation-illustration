@@ -213,8 +213,8 @@ var barChart = function (chartShow,
             .text(legendText);
     }
 
-    // append the bottom legend
-    var bottomLegend = svg.append('g')
+    // append the citation
+    var citation = svg.append('g')
         .attr('transform', 'translate(0, 319)')
         .append('text')
         .attr('class', 'citation')
@@ -234,16 +234,20 @@ var barChart = function (chartShow,
 /*
 ** generate the heat map
 */
-var heatMap = function (chartShow,
+var heatMapUS = function (chartShow,
                         state, 
                         carMileageNum, 
                         stateJson, 
                         geoJson,
-                        colorScheme) {
+                        colorScheme,
+                        legendTitle,
+                        tickNum,
+                        personalLegendTitle,
+                        citationText) {
     // declare variables
     var margin = {top: 10, right: 15, bottom: 45, left: 75},
         width = 515 - margin.left - margin.right,
-        height = 335 - margin.top - margin.bottom,
+        height = 360 - margin.top - margin.bottom,
         purple = ['#f1d8ee', '#e4b1de', '#b17eab', '#6f4f6b', '#422f40'];
 
     // prevent multiple svg's from being created
@@ -309,24 +313,25 @@ var heatMap = function (chartShow,
 
     // make the legend - create the rect and fill with gradient
     var legendWidth = 175,
-        legendHeight = 22;
+        legendHeight = 22,
+        personalLegendWidth = 50;
 
     var legend = svg.append('g')
-        .attr('transform', 'translate(250, 300)');
+        .attr('transform', 'translate(250, 310)');
 
     legend.append('rect')
         .attr('width', legendWidth)
         .attr('height', legendHeight)
-        .attr('transform', 'translate(-20, 0)')
+        .attr('transform', 'translate(20, 0)')
         .attr('fill', 'url(#linear-gradient)');
 
     // add the title to the legend
     legend.append('text')
         .attr('class', 'citation-larger')
-        .attr('x', 68)
+        .attr('x', 108)
         .attr('y', -8)
         .style('text-anchor', 'middle')
-        .text('Average Annual Miles');
+        .text(legendTitle);
 
     // add labeled ticks to the legend
     var xScale = d3.scale.linear()
@@ -335,13 +340,37 @@ var heatMap = function (chartShow,
     
     var xAxis = d3.svg.axis()
         .orient('bottom')
-        .ticks(4)
+        .ticks(tickNum)
         .scale(xScale);
     
     legend.append('g')
         .attr('class', 'citation')
-        .attr('transform', 'translate(80, 15)')
+        .attr('transform', 'translate(110, 15)')
         .call(xAxis);
+
+    // append the personal color legend
+    var personalLegend = svg.append('g')
+        .attr('transform', 'translate(140, 310)');
+
+    personalLegend.append('rect')
+        .attr('width', personalLegendWidth)
+        .attr('height', legendHeight)
+        .attr('fill', color(carMileageNum));
+
+    // add the title to the personal legend
+    legend.append('text')
+        .attr('class', 'citation-larger')
+        .attr('x', -85)
+        .attr('y', -8)
+        .style('text-anchor', 'middle')
+        .text(personalLegendTitle);
+
+    // append the citation
+    var citation = svg.append('g')
+        .attr('transform', 'translate(0, 350)')
+        .append('text')
+        .attr('class', 'citation')
+        .text(citationText);
 }
 
 

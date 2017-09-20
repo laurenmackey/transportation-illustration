@@ -275,7 +275,16 @@ var variables = function (stateJson, geoJson) {
         var stateDataIdentificationHover = [];
 
         // call heatMap function to create the viz
-        var tooltipDrivingStateMapReturn = heatMap('driving-two', state, carMileageNum, stateJson, geoJson, 'purple');
+        var tooltipDrivingStateMapReturn = heatMapUS('driving-two', 
+                                                    state, 
+                                                    carMileageNum, 
+                                                    stateJson, 
+                                                    geoJson, 
+                                                    'purple', 
+                                                    'Average Annual Miles', 
+                                                    4,
+                                                    'Your Miles',
+                                                    'Source: U.S. Dept. of Transportation');
 
         // create array of selections for hover effect
         /*for (r = 0; r < stateData.length; r++) {
