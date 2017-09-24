@@ -67,9 +67,14 @@ var createHovers = function(hoverSelection, tooltip, myText, myText2,
             tooltip.text(addCommas(d.y) + myText);
             tooltip.style('left', Number(d3.select(this).attr('x')) + 64 + 'px');
             tooltip.style('top', Number(d3.select(this).attr('y')) - 52 + 'px');
-        } else {
+        } else if (waffleChartBool) {
             tooltip.text(myText + d.percent + myText2);
             tooltip.style('left', (d3.select(this).attr('x')) + 'px');
+            tooltip.style('top', -65 + 'px')
+        } else {
+            tooltip.text(myText + myText2);
+            tooltip.style('left', event.clientX - 585 + 'px');
+            tooltip.style('top', event.clientY - 480 + 'px');
         }
         return tooltip.style('display', 'block');
     }); 

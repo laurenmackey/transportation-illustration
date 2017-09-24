@@ -247,7 +247,7 @@ var heatMapUS = function (chartShow,
     // declare variables
     var margin = {top: 10, right: 15, bottom: 45, left: 75},
         width = 515 - margin.left - margin.right,
-        height = 360 - margin.top - margin.bottom,
+        height = 350 - margin.top - margin.bottom,
         purple = ['#f1d8ee', '#e4b1de', '#b17eab', '#6f4f6b', '#422f40'];
 
     // prevent multiple svg's from being created
@@ -264,7 +264,7 @@ var heatMapUS = function (chartShow,
         .scale([600]);
 
     var path = d3.geo.path()
-            .projection(projection);
+        .projection(projection);
 
     // calculate the domain of the heatmap
     var minMiles = d3.min(stateJson, function(d) { return d.averageDrivingMiles; }),
@@ -291,6 +291,9 @@ var heatMapUS = function (chartShow,
         .attr('d', path)
         .style('stroke', '#fff')
         .style('stroke-width', '1')
+        .attr('id', function (d,i) {
+                return 'state_' + i;
+            })
         .style('fill', function(d) {
             var value = d.properties.average_miles;
             return color(value);
@@ -350,7 +353,8 @@ var heatMapUS = function (chartShow,
 
     // append the personal color legend
     var personalLegend = svg.append('g')
-        .attr('transform', 'translate(140, 310)');
+        .attr('transform', 'translate(395, 250)');
+        // 140, 310
 
     personalLegend.append('rect')
         .attr('width', personalLegendWidth)
@@ -360,17 +364,30 @@ var heatMapUS = function (chartShow,
     // add the title to the personal legend
     legend.append('text')
         .attr('class', 'citation-larger')
-        .attr('x', -85)
-        .attr('y', -8)
+        .attr('x', 168) // -85
+        .attr('y', -70) // -8
         .style('text-anchor', 'middle')
         .text(personalLegendTitle);
 
     // append the citation
     var citation = svg.append('g')
-        .attr('transform', 'translate(0, 350)')
+        .attr('transform', 'translate(0, 340)')
         .append('text')
         .attr('class', 'citation')
         .text(citationText);
+
+    // create the tooltip textbox and pass it back to be used for hover effect
+    var tooltipMap = createTooltip('#' + chartShow);
+
+    // create an array for svg element id's to create hover effect for heat map driving viz
+    var stateDataIdentificationHover = [];
+
+    // create array of selections for hover effect
+    for (r = 0; r < stateJson.length; r++) {
+        stateDataIdentificationHover[r] = d3.selectAll('path#state_' + r);
+        createHovers(stateDataIdentificationHover[r], tooltipMap, geoJson.features[r].properties.name, 
+                    '\nAverage Miles: ' + addCommas(geoJson.features[r].properties.average_miles), false, false, projection);
+    }
 }
 
 

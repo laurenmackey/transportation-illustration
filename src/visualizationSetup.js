@@ -271,26 +271,17 @@ var variables = function (stateJson, geoJson) {
             createHovers(drivingDataIdentificationHover[p], tooltipDrivingAgeBarReturn, ' Average Miles', '', true, false);
         }   
 
-        // create an array for svg element id's to create hover effect for heat map driving viz
-        var stateDataIdentificationHover = [];
-
         // call heatMap function to create the viz
-        var tooltipDrivingStateMapReturn = heatMapUS('driving-two', 
-                                                    state, 
-                                                    carMileageNum, 
-                                                    stateJson, 
-                                                    geoJson, 
-                                                    'purple', 
-                                                    'Average Annual Miles', 
-                                                    4,
-                                                    'Your Miles',
-                                                    'Source: U.S. Dept. of Transportation');
-
-        // create array of selections for hover effect
-        /*for (r = 0; r < stateData.length; r++) {
-            stateDataIdentificationHover[r] = d3.selectAll('rect#' + stateDataIdentification[r]);
-            createHovers(stateDataIdentificationHover[r], tooltipDrivingStateMapReturn, ' Average Miles', '', false, false);
-        } */      
+        heatMapUS('driving-two', 
+                state, 
+                carMileageNum, 
+                stateJson, 
+                geoJson, 
+                'purple', 
+                'Average Annual Miles', 
+                4,
+                'Your Miles',
+                'Source: U.S. Dept. of Transportation');      
     } 
 }
 
