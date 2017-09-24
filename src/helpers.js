@@ -73,8 +73,8 @@ var createHovers = function(hoverSelection, tooltip, myText, myText2,
             tooltip.style('top', -65 + 'px')
         } else {
             tooltip.text(myText + myText2);
-            tooltip.style('left', event.clientX - 585 + 'px');
-            tooltip.style('top', event.clientY - 480 + 'px');
+            tooltip.style('left', event.clientX - 760 + 'px');
+            tooltip.style('top', event.clientY - 425 + 'px');
         }
         return tooltip.style('display', 'block');
     }); 
