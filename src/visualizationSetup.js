@@ -51,8 +51,7 @@ var variables = function (ageJson, stateJson, geoJson) {
         pass = true,
         passTwo = true,
         milesTotal,
-        waffleDataClass = ['car', 'bicycle', 'walk', 'public'],
-        drivingData = ['16', 7624, '20', 15098, '35', 15291, '55', 11972, '65', 7646, 'total', 13476];
+        waffleDataClass = ['car', 'bicycle', 'walk', 'public'];
 
     // set mileage numbers for each transit type, converted to annual number
     for (var i = 1; i < transitLength * 2; i += 2) {
@@ -210,19 +209,16 @@ var variables = function (ageJson, stateJson, geoJson) {
         show('driving-two');
         hide('buffer');
 
-        // create an array for svg element id's to create hover effect for first driving viz
-        var drivingDataIdentification = ['sixteen', 'twenty', 'thirty-five', 'fifty-five', 'sixty-five', 'overall'],
-            drivingDataIdentificationHover = [];
-
-        // call drivingAgeBar to format driving data
-        // then call the barChart function to create the viz
-        var tooltipDrivingAgeBarReturn = drivingAgeBar(drivingData, carMileageNum, age, drivingDataIdentification);
-
-        // create array of selections for hover effect
-        for (var p = 0; p < drivingDataIdentification.length; p++) {
-            drivingDataIdentificationHover[p] = d3.selectAll('rect#' + drivingDataIdentification[p]);
-            createHovers(drivingDataIdentificationHover[p], tooltipDrivingAgeBarReturn, ' Average Miles', '', true, false);
-        }   
+        // call barChart function to create the viz
+        barChart('driving-one',
+               ageJson,
+               'Annual Miles', 
+               age, 
+               carMileageNum, 
+               15900, 
+               7,
+               'Your mileage',
+               'Source: U.S. Dept. of Transportation');   
 
         // call heatMap function to create the viz
         heatMapUS('driving-two', 
@@ -236,41 +232,4 @@ var variables = function (ageJson, stateJson, geoJson) {
                 'Your Miles',
                 'Source: U.S. Dept. of Transportation');      
     } 
-}
-
-/*
-** re-format driving data to be able to be used in charts
-*/
-var drivingAgeBar = function(drivingData, carMileageNum, age, drivingDataIdentification) {
-    // declare variables
-    var drivingDataAges = [],
-        drivingDataRevised = [],
-        numberOfYTicks = 7,
-        i,
-        j = 1,
-        k = 0;
-
-    // create an array of correctly formatted ages to create a revised drivingData array
-    drivingDataAges = ['16-19', '20-34', '35-54', '55-64', '65+', 'Overall'];
- 
-    // create revised drivingData array of objects with correct ages, mileage amounts, and identifications
-    // here, x is age and y is miles
-    for (i = 0; i < drivingDataAges.length; i++) {
-        drivingDataRevised.push({'first': drivingData[k], 'x': drivingDataAges[i], 'y': drivingData[j],
-                                'identification': drivingDataIdentification[i]});
-        j += 2;
-        k += 2;
-    }
-
-    var tooltipDrivingAgeBar = barChart('driving-one', 
-                                 numberOfYTicks, 
-                                 drivingDataRevised, 
-                                 'Annual Miles', 
-                                 age, 
-                                 carMileageNum, 
-                                 15900, 
-                                 'Your mileage',
-                                 'Source: U.S. Dept. of Transportation');
-
-    return tooltipDrivingAgeBar;
 }

@@ -77,15 +77,15 @@ var waffleChart = function (milesTotal, waffleData) {
 /*
 ** generate the bar chart
 */
-var barChart = function (chartShow,  
-                         numberOfYTicks, 
-                         myData, 
-                         xText, 
-                         highlightValue, 
-                         personalLineNum, 
-                         graphRange, 
-                         legendText,
-                         citationText) {
+var barChart = function (chartShow, 
+                        ageJson, 
+                        xText, 
+                        highlightValue, 
+                        personalLineNum, 
+                        graphRange,
+                        numberOfYTicks, 
+                        legendText,
+                        citationText) {
  
     // declare variables
     var margin = {top: 10, right: 15, bottom: 45, left: 75},
@@ -95,14 +95,14 @@ var barChart = function (chartShow,
     // create x and y scale functions that map each value in the domain to 
     // a value in the specified range
     var xScale = d3.scale.ordinal()
-        .domain(myData.map(function(d) {
-            return d.x;
+        .domain(ageJson.map(function(d) {
+            return d.ageRange;
         }))
         .rangeRoundBands([0, width], 0.3);
  
     var yScale = d3.scale.linear()
-        .domain([0, d3.max(myData, function(d) {
-            return d.y;
+        .domain([0, d3.max(ageJson, function(d) {
+            return d.averageDrivingMiles;
         })])
         .range([height, 0]);
  
@@ -166,25 +166,25 @@ var barChart = function (chartShow,
  
     // append the bars
     var bar = svg.selectAll('.bar')
-        .data(myData)
+        .data(ageJson)
         .enter()
         .append('rect')
             .attr('class', 'bar')
             .attr('id', function (d,i) {
-                return d.identification;
+                return d.id;
             })
             .attr('x', function(d) {
-                return xScale(d.x);
+                return xScale(d.ageRange);
             })
             .attr('y', function(d) {
-                return yScale(d.y);
+                return yScale(d.averageDrivingMiles);
             })
             .attr('height', function(d) {
-                return height - yScale(d.y);
+                return height - yScale(d.averageDrivingMiles);
             })
             .attr('width', xScale.rangeBand())
             .attr('fill', function(d,i) {
-                return d.first == highlightValue?'#98df8a':'#6baed6';
+                return d.age == highlightValue?'#98df8a':'#6baed6';
             });
  
     // append the line to show personal amount
@@ -220,15 +220,17 @@ var barChart = function (chartShow,
         .attr('class', 'citation')
         .text(citationText);
  
-    // ensure data accuracy
-    function type(d) {
-        d.y = +d.y;
-        return d;
-    }
- 
     // create the tooltip textbox and pass it back to be used for hover effect
     var tooltipBar = createTooltip('#' + chartShow);
-    return tooltipBar;
+
+    // create an array for svg element id's to create hover effect for heat map driving viz
+    var ageDataIdentificationHover = [];
+
+    // create array of selections for hover effect
+    for (var q = 0; q < ageJson.length; q++) {
+        ageDataIdentificationHover[q] = d3.selectAll('rect#' + ageJson[q].id);
+        createHovers(ageDataIdentificationHover[q], tooltipBar, addCommas(ageJson[q].averageDrivingMiles), ' Average Miles', true, false);
+    }
 }
 
 /*
@@ -386,7 +388,7 @@ var heatMapUS = function (chartShow,
     for (r = 0; r < stateJson.length; r++) {
         stateDataIdentificationHover[r] = d3.selectAll('path#state_' + r);
         createHovers(stateDataIdentificationHover[r], tooltipMap, geoJson.features[r].properties.name, 
-                    '\nAverage Miles: ' + addCommas(geoJson.features[r].properties.average_miles), false, false, projection);
+                    '\nAverage Miles: ' + addCommas(geoJson.features[r].properties.average_miles), false, false);
     }
 }
 

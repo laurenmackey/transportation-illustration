@@ -79,7 +79,7 @@ var createHovers = function(hoverSelection, tooltip, myText, myText2,
         hoverSelection.style('opacity', '0.7');
         // if this is a bar chart
         if (barChartBool) {
-            tooltip.text(addCommas(d.y) + myText);
+            tooltip.text(myText + myText2);
             tooltip.style('left', Number(d3.select(this).attr('x')) + 64 + 'px');
             tooltip.style('top', Number(d3.select(this).attr('y')) - 52 + 'px');
         } else if (waffleChartBool) {
