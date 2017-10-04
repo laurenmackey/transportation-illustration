@@ -10,6 +10,7 @@ var waffleChart = function (milesTotal, waffleData) {
         heightSquares = 10,
         squareSize = 25,
         gap = 1,
+        boxes,
         unitsPerBox = milesTotal / (widthSquares * heightSquares),
         theData = [];
 
@@ -19,13 +20,20 @@ var waffleChart = function (milesTotal, waffleData) {
         .range(['#98df8a', '#fdd0a2', '#6baed6', '#de9ed6']);
 
     // add data into an array for each type of transit
-    waffleData.forEach(function(d, i) {   
+    /*waffleData.forEach(function(d, i) {   
         d.boxes = d.miles / unitsPerBox;
         d.percent = String(round((d.miles / milesTotal * 100), 1)) + '%';
         for (i = 0; i < d.boxes; i++) {
             theData.push({'method': d.method, 'boxes': d.boxes, 'percent': d.percent});
         }
-    });
+    });*/
+
+    if (waffleData['car']['exists']) {
+        waffleData['car']['boxes'] = waffleData['car']['mileage'] / unitsPerBox;
+        waffleData['car']['percent'] = String(round((['car']['mileage'] / milesTotal * 100), 1)) + '%';
+        theData.push({'method': waffleData['car']['class'], 'boxes': waffleData['car']['boxes'], 
+                    'percent': waffleData['car']['percent']});
+    }
 
     width = (squareSize * widthSquares) + widthSquares * gap + squareSize;
     height = (squareSize * heightSquares) + heightSquares * gap + squareSize + 25;
@@ -71,7 +79,15 @@ var waffleChart = function (milesTotal, waffleData) {
 
     // create the tooltip textbox
     var tooltipWaffle = createTooltip('#waffle');
-    return tooltipWaffle;
+
+    // create an array for waffle viz hover effect, plus correlating hover text
+    var waffleDataClassHover = [];
+
+    // create array of selections for hover effect
+    for (var o = 0; o < waffleData.length; o++) {
+        waffleDataClassHover[o] = d3.selectAll('rect.' + waffleData[o].class);
+        createHovers(waffleDataClassHover[o], tooltipWaffle, waffleData[o].display, ' of your transit', false, true);
+    }
 }
 
 /*
@@ -238,7 +254,7 @@ var barChart = function (chartShow,
 */
 var heatMapUS = function (chartShow,
                         state, 
-                        carMileageNum, 
+                        carMileage, 
                         stateJson, 
                         geoJson,
                         colorScheme,
@@ -273,8 +289,8 @@ var heatMapUS = function (chartShow,
         maxMiles = d3.max(stateJson, function(d) { return d.averageDrivingMiles; });
 
     // reset minMiles if personal mileage is less
-    if (minMiles > carMileageNum) {
-        minMiles = carMileageNum;
+    if (minMiles > carMileage) {
+        minMiles = carMileage;
     }
 
     // set the colors
@@ -361,7 +377,7 @@ var heatMapUS = function (chartShow,
     personalLegend.append('rect')
         .attr('width', personalLegendWidth)
         .attr('height', legendHeight)
-        .attr('fill', color(carMileageNum));
+        .attr('fill', color(carMileage));
 
     // add the title to the personal legend
     legend.append('text')

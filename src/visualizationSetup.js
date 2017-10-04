@@ -32,16 +32,18 @@ var variables = function (ageJson, stateJson, geoJson) {
     var transitLength = transitTypes.length / 2,
         milesLength = transitMiles.length,
         workLength = work.length / 2,
-        waffleData = [],
         carTransit = false,
         carMileage = 0,
-        carMileageNum,
+        carMileageText,
         bicycleTransit = false,
         bicycleMileage = 0,
+        bicycleMileageText,
         walkTransit = false,
         walkMileage = 0,
+        walkMileageText,
         publicTransit = false,
         publicMileage = 0,
+        publicMileageText,
         carSoloWork = false,
         carCarpoolWork = false,
         publicWork = false,
@@ -51,7 +53,12 @@ var variables = function (ageJson, stateJson, geoJson) {
         pass = true,
         passTwo = true,
         milesTotal,
-        waffleDataClass = ['car', 'bicycle', 'walk', 'public'];
+        waffleData = {
+            'car': {},
+            'bicycle': {},
+            'walk': {},
+            'publicTransit': {}
+        };
 
     // set mileage numbers for each transit type, converted to annual number
     for (var i = 1; i < transitLength * 2; i += 2) {
@@ -101,36 +108,32 @@ var variables = function (ageJson, stateJson, geoJson) {
     hide('driving-paragraph-two');
     hide('driving-two');
     hide('driving-paragraph-div-two');
-    show('buffer');    
+    show('buffer'); 
 
-    // push car data to main array, plus create variables for dynamic text
-    if (carTransit == true) {        
-        waffleData.push({'method': waffleDataClass[0], 'miles': carMileage});
-        carMileageNum = carMileage;        
+    // push corrresponding transit data to waffle viz array
+    if (carTransit) {        
+        waffleData['car']['exists'] = true;
+        waffleData['car']['mileage'] = carMileage;
+        waffleData['car']['display'] = 'Car: \n';
+        waffleData['car']['class'] = 'car';
+
+        carMileageText = addCommas(carMileage);        
     }
 
-    // push bike data to main array, plus create variables for dynamic text
-    if (bicycleTransit == true) {
-        waffleData.push({'method': waffleDataClass[1], 'miles': bicycleMileage});
-        bicycleMileage = addCommas(bicycleMileage);
-        document.getElementById('waffle-bicycle').textContent = bicycleMileage;
-        show('waffle-bicycle-paragraph');
+    if (bicycleTransit) {
+        waffleData.push({'bicycle': true, 'bicycleMileage': bicycleMileage, 'bicycleDisplay': 'Bicycle: \n', 'class': 'bicycle'});
+        bicycleMileageText = addCommas(bicycleMileage);
     }
 
-    // push walk data to main array, plus create variables for dynamic text
-    if (walkTransit == true) {
-        waffleData.push({'method': waffleDataClass[2], 'miles': walkMileage});
-        walkMileage = addCommas(walkMileage);
-        document.getElementById('waffle-walk').textContent = walkMileage;
-        show('waffle-walk-paragraph');
+    if (walkTransit) {
+        waffleData.push({'walk': true, 'walkMileage': walkMileage, 'walkDisplay:': 'Walk: \n', 'class': 'walk'});
+        walkMileageText = addCommas(walkMileage);
     }
 
-    // push public transit data to main array, plus create variables for dynamic text
-    if (publicTransit == true) {
-        waffleData.push({'method': waffleDataClass[3], 'miles': publicMileage});
-        publicMileage = addCommas(publicMileage);
-        document.getElementById('waffle-public').textContent = publicMileage;
-        show('waffle-public-paragraph');
+    if (publicTransit) {
+        waffleData.push({'publicTransit': true, 'publicTransitMiles': publicMileage, 
+                        'publicTransitDisplay': 'Public Transit: \n', 'class': 'public'});
+        publicMileageText = addCommas(publicMileage);
     }
 
     // yell at user if a field is blank
@@ -169,67 +172,69 @@ var variables = function (ageJson, stateJson, geoJson) {
         }
     }*/
 
-    // if all is well, hide profile, show visualization page on Next click, plus show waffle viz
+    // if all is well, hide profile and show visualization page on Next click
     if (pass) {
         hideShow('profile', 'visualization');
-        if (carTransit)
-        {
-            carMileage = addCommas(carMileage);
-            document.getElementById('waffle-car').textContent = carMileage;
+
+        // if they drive, show the corresponding viz's
+        if (carTransit) {
+            document.getElementById('waffle-car').textContent = carMileageText;
             show('waffle-car-paragraph');
+
+            // parse and link age, state, and geo data jsons
+            parseAgeData(age, carMileage, ageJson);
+            parseStateData(state, carMileage, stateJson, geoJson);
+    
+            // show first driving viz and paragraph, plus hide buffer div
+            show('driving-title');
+            show('driving-paragraph-one');
+            show('driving-paragraph-div-one');
+            show('driving-one');
+            show('driving-paragraph-two');
+            show('driving-paragraph-div-two');
+            show('driving-two');
+            hide('buffer');
+
+            // call waffleChart function to create the waffle chart transit breakdown viz
+            waffleChart(milesTotal, waffleData);
+    
+            // call barChart function to create the age bar chart driving viz
+            barChart('driving-one',
+                   ageJson,
+                   'Annual Miles', 
+                   age, 
+                   carMileage, 
+                   15900, 
+                   7,
+                   'Your mileage',
+                   'Source: U.S. Dept. of Transportation');   
+    
+            // call heatMap function to create the state driving heatmap viz
+            heatMapUS('driving-two', 
+                    state, 
+                    carMileage, 
+                    stateJson, 
+                    geoJson, 
+                    'purple', 
+                    'Average Annual Miles', 
+                    4,
+                    'Your Miles',
+                    'Source: U.S. Dept. of Transportation');
         }
 
-        // create an array for waffle viz hover effect, plus correlating hover text
-        var waffleDataClassHover = [],
-            waffleDataHoverDisplay = ['Car: \n', 'Bicycle: \n', 'Walk: \n', 'Public Transit: \n'];
+        if (bicycleTransit) {
+            document.getElementById('waffle-bicycle').textContent = bicycleMileageText;
+            show('waffle-bicycle-paragraph');
+        }
 
-        // call waffleChart to create the viz
-        var tooltipWaffleReturn = waffleChart(milesTotal, waffleData);
+        if (walkTransit) {
+            document.getElementById('waffle-walk').textContent = walkMileageText;
+            show('waffle-walk-paragraph');
+        }
 
-        // create array of selections for hover effect
-        for (var o = 0; o < waffleDataClass.length; o++) {
-            waffleDataClassHover[o] = d3.selectAll('rect.' + waffleDataClass[o]);
-            createHovers(waffleDataClassHover[o], tooltipWaffleReturn, waffleDataHoverDisplay[o], ' of your transit', false, true);
+        if (publicTransit) {
+            document.getElementById('waffle-public').textContent = publicMileageText;
+            show('waffle-public-paragraph');
         }
     }
-    
-    // if they drive, show the corresponding viz's
-    if (carTransit) {
-        // parse and link age, state, and geo data jsons
-        parseAgeData(age, carMileageNum, ageJson);
-        parseStateData(state, carMileageNum, stateJson, geoJson);
-
-        // show first driving viz and paragraph and hide buffer div
-        show('driving-title');
-        show('driving-paragraph-one');
-        show('driving-paragraph-div-one');
-        show('driving-one');
-        show('driving-paragraph-two');
-        show('driving-paragraph-div-two');
-        show('driving-two');
-        hide('buffer');
-
-        // call barChart function to create the viz
-        barChart('driving-one',
-               ageJson,
-               'Annual Miles', 
-               age, 
-               carMileageNum, 
-               15900, 
-               7,
-               'Your mileage',
-               'Source: U.S. Dept. of Transportation');   
-
-        // call heatMap function to create the viz
-        heatMapUS('driving-two', 
-                state, 
-                carMileageNum, 
-                stateJson, 
-                geoJson, 
-                'purple', 
-                'Average Annual Miles', 
-                4,
-                'Your Miles',
-                'Source: U.S. Dept. of Transportation');      
-    } 
 }
