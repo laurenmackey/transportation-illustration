@@ -53,12 +53,8 @@ var variables = function (ageJson, stateJson, geoJson) {
         pass = true,
         passTwo = true,
         milesTotal,
-        waffleData = {
-            'car': {},
-            'bicycle': {},
-            'walk': {},
-            'publicTransit': {}
-        };
+        index = 0,
+        waffleData = [];
 
     // set mileage numbers for each transit type, converted to annual number
     for (var i = 1; i < transitLength * 2; i += 2) {
@@ -96,6 +92,31 @@ var variables = function (ageJson, stateJson, geoJson) {
         }
     }
 
+    // push corrresponding transit data to waffle viz array
+    if (carTransit) {        
+        waffleData[index] = {'method': 'car', 'mileage': carMileage, 'display': 'Car: \n'};
+        index++;
+        carMileageText = addCommas(carMileage);        
+    }
+
+    if (bicycleTransit) {
+        waffleData[index] = {'method': 'bicycle', 'mileage': bicycleMileage, 'display': 'Bicycle: \n'};
+        index++;
+        bicycleMileageText = addCommas(bicycleMileage);
+    }
+
+    if (walkTransit) {
+        waffleData[index] = {'method': 'walk', 'mileage': walkMileage, 'display': 'Walk: \n'};
+        index++;
+        walkMileageText = addCommas(walkMileage);
+    }
+
+    if (publicTransit) {
+        waffleData[index] = {'method': 'public', 'mileage': publicMileage, 'display': 'Public Transit: \n'};
+        index++;
+        publicMileageText = addCommas(publicMileage);
+    }
+
     // hide any previous waffle paragraph info and other charts in case user went back and changed
     hide('waffle-car-paragraph');
     hide('waffle-bicycle-paragraph');
@@ -109,32 +130,6 @@ var variables = function (ageJson, stateJson, geoJson) {
     hide('driving-two');
     hide('driving-paragraph-div-two');
     show('buffer'); 
-
-    // push corrresponding transit data to waffle viz array
-    if (carTransit) {        
-        waffleData['car']['exists'] = true;
-        waffleData['car']['mileage'] = carMileage;
-        waffleData['car']['display'] = 'Car: \n';
-        waffleData['car']['class'] = 'car';
-
-        carMileageText = addCommas(carMileage);        
-    }
-
-    if (bicycleTransit) {
-        waffleData.push({'bicycle': true, 'bicycleMileage': bicycleMileage, 'bicycleDisplay': 'Bicycle: \n', 'class': 'bicycle'});
-        bicycleMileageText = addCommas(bicycleMileage);
-    }
-
-    if (walkTransit) {
-        waffleData.push({'walk': true, 'walkMileage': walkMileage, 'walkDisplay:': 'Walk: \n', 'class': 'walk'});
-        walkMileageText = addCommas(walkMileage);
-    }
-
-    if (publicTransit) {
-        waffleData.push({'publicTransit': true, 'publicTransitMiles': publicMileage, 
-                        'publicTransitDisplay': 'Public Transit: \n', 'class': 'public'});
-        publicMileageText = addCommas(publicMileage);
-    }
 
     // yell at user if a field is blank
     /*if (age == 'Select age range' || !county || !transitTypes[1].value 

@@ -72,24 +72,23 @@ var createTooltip = function(id) {
 ** create the hover-for-info effect
 *****************************************
 *****************************************/
-var createHovers = function(hoverSelection, tooltip, myText, myText2, 
+var createHovers = function(hoverSelection, tooltip, myText, 
                             barChartBool, waffleChartBool) {
     // create the hover in effect
     hoverSelection.on('mouseover', function(d,i) {
         hoverSelection.style('opacity', '0.7');
-        // if this is a bar chart
         if (barChartBool) {
-            tooltip.text(myText + myText2);
+            tooltip.text(myText);
             tooltip.style('left', Number(d3.select(this).attr('x')) + 64 + 'px');
             tooltip.style('top', Number(d3.select(this).attr('y')) - 52 + 'px');
         } else if (waffleChartBool) {
-            tooltip.text(myText + d.percent + myText2);
+            tooltip.text(myText);
             tooltip.style('left', (d3.select(this).attr('x')) + 'px');
             tooltip.style('top', -65 + 'px')
         } else {
-            tooltip.text(myText + myText2);
+            tooltip.text(myText);
             tooltip.style('left', event.clientX - 760 + 'px');
-            tooltip.style('top', event.clientY - 425 + 'px');
+            tooltip.style('top', event.clientY - 400 + 'px');
         }
         return tooltip.style('display', 'block');
     }); 
@@ -107,7 +106,6 @@ var createHovers = function(hoverSelection, tooltip, myText, myText2,
 ** text
 *****************************************
 *****************************************/
-
 var parseAgeData = function(age, carMileage, ageJson) {
     var ageMiles,
         agePercent,
@@ -173,7 +171,6 @@ var parseAgeData = function(age, carMileage, ageJson) {
 ** text
 *****************************************
 *****************************************/
-
 var parseStateData = function(state, carMileage, stateJson, geoJson) {
     var stateMiles,
         stateMoreLess,

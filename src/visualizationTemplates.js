@@ -19,24 +19,21 @@ var waffleChart = function (milesTotal, waffleData) {
         .domain(['car', 'bicycle', 'walk', 'public'])
         .range(['#98df8a', '#fdd0a2', '#6baed6', '#de9ed6']);
 
-    // add data into an array for each type of transit
-    /*waffleData.forEach(function(d, i) {   
-        d.boxes = d.miles / unitsPerBox;
-        d.percent = String(round((d.miles / milesTotal * 100), 1)) + '%';
-        for (i = 0; i < d.boxes; i++) {
-            theData.push({'method': d.method, 'boxes': d.boxes, 'percent': d.percent});
-        }
-    });*/
-
-    if (waffleData['car']['exists']) {
-        waffleData['car']['boxes'] = waffleData['car']['mileage'] / unitsPerBox;
-        waffleData['car']['percent'] = String(round((['car']['mileage'] / milesTotal * 100), 1)) + '%';
-        theData.push({'method': waffleData['car']['class'], 'boxes': waffleData['car']['boxes'], 
-                    'percent': waffleData['car']['percent']});
+    // add box and percent data to main array
+    for (var a = 0; a < Object.keys(waffleData).length; a++) {
+        waffleData[a]['boxes'] = waffleData[a].mileage / unitsPerBox; 
+        waffleData[a]['percent'] = String(round((waffleData[a].mileage / milesTotal * 100), 1)) + '%';
     }
 
     width = (squareSize * widthSquares) + widthSquares * gap + squareSize;
     height = (squareSize * heightSquares) + heightSquares * gap + squareSize + 25;
+
+    // make an array with the total number of boxes and corresponding data
+    waffleData.forEach(function(d, i) {   
+        for (var b = 0; b < d.boxes; b++) {
+            theData.push({'method': d.method, 'boxes': d.boxes, 'percent': d.percent});
+        }
+    });
 
     // prevent multiple svg's from being created
     d3.select('#waffle').selectAll('svg').remove();
@@ -45,7 +42,7 @@ var waffleChart = function (milesTotal, waffleData) {
     var waffle = d3.select('#waffle')
         .append('svg')
         .attr('width', width)
-        .attr('height', height)
+        .attr('height', height);
 
     // append the rects to create the waffle
     waffle.selectAll('rect')
@@ -84,9 +81,9 @@ var waffleChart = function (milesTotal, waffleData) {
     var waffleDataClassHover = [];
 
     // create array of selections for hover effect
-    for (var o = 0; o < waffleData.length; o++) {
-        waffleDataClassHover[o] = d3.selectAll('rect.' + waffleData[o].class);
-        createHovers(waffleDataClassHover[o], tooltipWaffle, waffleData[o].display, ' of your transit', false, true);
+    for (var o = 0; o < Object.keys(waffleData).length; o++) {
+        waffleDataClassHover[o] = d3.selectAll('rect.' + waffleData[o].method);
+        createHovers(waffleDataClassHover[o], tooltipWaffle, waffleData[o].display + waffleData[o].percent + ' of your transit', false, true);
     }
 }
 
@@ -245,7 +242,7 @@ var barChart = function (chartShow,
     // create array of selections for hover effect
     for (var q = 0; q < ageJson.length; q++) {
         ageDataIdentificationHover[q] = d3.selectAll('rect#' + ageJson[q].id);
-        createHovers(ageDataIdentificationHover[q], tooltipBar, addCommas(ageJson[q].averageDrivingMiles), ' Average Miles', true, false);
+        createHovers(ageDataIdentificationHover[q], tooltipBar, addCommas(ageJson[q].averageDrivingMiles) + ' Average Miles', true, false);
     }
 }
 
@@ -403,7 +400,7 @@ var heatMapUS = function (chartShow,
     // create array of selections for hover effect
     for (r = 0; r < stateJson.length; r++) {
         stateDataIdentificationHover[r] = d3.selectAll('path#state_' + r);
-        createHovers(stateDataIdentificationHover[r], tooltipMap, geoJson.features[r].properties.name, 
+        createHovers(stateDataIdentificationHover[r], tooltipMap, geoJson.features[r].properties.name + 
                     '\nAverage Miles: ' + addCommas(geoJson.features[r].properties.average_miles), false, false);
     }
 }
