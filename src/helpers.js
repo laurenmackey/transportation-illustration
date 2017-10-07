@@ -116,14 +116,13 @@ var parseAgeData = function(age, carMileage, ageJson) {
         carMileageString = addCommas(carMileage); 
 
     // generate dynamic text for age comparison
-    // if they're 16, they drive more than automatically
+    // if they're under 16, they drive more automatically
     if (age == 'U16') {
         agePercent = '100%';
         ageMiles = 0; 
     } else {
         for (var aa = 0; aa < ageJson.length; aa++) {
-            if (ageJson[aa].age == age)
-            {
+            if (ageJson[aa].age == age) {
                 ageMiles = ageJson[aa].averageDrivingMiles;
                 ageMiles.toString();
             }
@@ -158,6 +157,7 @@ var parseAgeData = function(age, carMileage, ageJson) {
         totalMoreLess = 'more';
     }
 
+    // fill in the corresponding text
     document.getElementById('driving-car').textContent = carMileageString;
     document.getElementById('age-percent').textContent = agePercent;
     document.getElementById('age-moreless').textContent = ageMoreLess;
@@ -194,6 +194,7 @@ var parseStateData = function(state, carMileage, stateJson, geoJson) {
         stateMoreLess = 'more';
     }
 
+    // fill in the corresponding text
     document.getElementById('state-percent').textContent = statePercent;
     document.getElementById('state-moreless').textContent = stateMoreLess;
 
@@ -203,7 +204,7 @@ var parseStateData = function(state, carMileage, stateJson, geoJson) {
 
         for (var d = 0; d < stateJson.length; d++) {
             if (geoJsonState == stateJson[d].state) {
-                geoJson.features[c].properties.average_miles = stateJson[d].averageDrivingMiles;
+                geoJson.features[c].properties.domain = stateJson[d].averageDrivingMiles;
             }
         }
     }

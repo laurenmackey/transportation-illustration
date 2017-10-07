@@ -1,7 +1,9 @@
-/*
-** generate the waffle chart
-** Note: not currently standardized as a template
-*/
+/****************************************
+*****************************************
+** generate the waffle viz of all transit
+** data broken down
+*****************************************
+*****************************************/
 var waffleChart = function (milesTotal, waffleData) {
     // declare variables
     var width,
@@ -12,7 +14,8 @@ var waffleChart = function (milesTotal, waffleData) {
         gap = 1,
         boxes,
         unitsPerBox = milesTotal / (widthSquares * heightSquares),
-        theData = [];
+        theData = [],
+        waffleDataClassHover = [];
 
     // set colors
     var color = d3.scale.ordinal()
@@ -28,7 +31,7 @@ var waffleChart = function (milesTotal, waffleData) {
     width = (squareSize * widthSquares) + widthSquares * gap + squareSize;
     height = (squareSize * heightSquares) + heightSquares * gap + squareSize + 25;
 
-    // make an array with the total number of boxes and corresponding data
+    // make an array with the number of objects for the number of boxes
     waffleData.forEach(function(d, i) {   
         for (var b = 0; b < d.boxes; b++) {
             theData.push({'method': d.method, 'boxes': d.boxes, 'percent': d.percent});
@@ -77,9 +80,6 @@ var waffleChart = function (milesTotal, waffleData) {
     // create the tooltip textbox
     var tooltipWaffle = createTooltip('#waffle');
 
-    // create an array for waffle viz hover effect, plus correlating hover text
-    var waffleDataClassHover = [];
-
     // create array of selections for hover effect
     for (var o = 0; o < Object.keys(waffleData).length; o++) {
         waffleDataClassHover[o] = d3.selectAll('rect.' + waffleData[o].method);
@@ -87,11 +87,14 @@ var waffleChart = function (milesTotal, waffleData) {
     }
 }
 
-/*
-** generate the bar chart
-*/
+/****************************************
+*****************************************
+** generate the bar chart viz of how your
+** driving data compares to all ages
+*****************************************
+*****************************************/
 var barChart = function (chartShow, 
-                        ageJson, 
+                        json, 
                         xText, 
                         highlightValue, 
                         personalLineNum, 
@@ -103,19 +106,20 @@ var barChart = function (chartShow,
     // declare variables
     var margin = {top: 10, right: 15, bottom: 45, left: 75},
         width = 515 - margin.left - margin.right,
-        height = 335 - margin.top - margin.bottom;
+        height = 335 - margin.top - margin.bottom,
+        barDataIdentificationHover = [];
  
     // create x and y scale functions that map each value in the domain to 
     // a value in the specified range
     var xScale = d3.scale.ordinal()
-        .domain(ageJson.map(function(d) {
-            return d.ageRange;
+        .domain(json.map(function(d) {
+            return d.bar;
         }))
         .rangeRoundBands([0, width], 0.3);
  
     var yScale = d3.scale.linear()
-        .domain([0, d3.max(ageJson, function(d) {
-            return d.averageDrivingMiles;
+        .domain([0, d3.max(json, function(d) {
+            return d.yAxis;
         })])
         .range([height, 0]);
  
@@ -179,7 +183,7 @@ var barChart = function (chartShow,
  
     // append the bars
     var bar = svg.selectAll('.bar')
-        .data(ageJson)
+        .data(json)
         .enter()
         .append('rect')
             .attr('class', 'bar')
@@ -187,17 +191,17 @@ var barChart = function (chartShow,
                 return d.id;
             })
             .attr('x', function(d) {
-                return xScale(d.ageRange);
+                return xScale(d.bar);
             })
             .attr('y', function(d) {
-                return yScale(d.averageDrivingMiles);
+                return yScale(d.yAxis);
             })
             .attr('height', function(d) {
-                return height - yScale(d.averageDrivingMiles);
+                return height - yScale(d.yAxis);
             })
             .attr('width', xScale.rangeBand())
             .attr('fill', function(d,i) {
-                return d.age == highlightValue?'#98df8a':'#6baed6';
+                return d.color == highlightValue?'#98df8a':'#6baed6';
             });
  
     // append the line to show personal amount
@@ -233,27 +237,27 @@ var barChart = function (chartShow,
         .attr('class', 'citation')
         .text(citationText);
  
-    // create the tooltip textbox and pass it back to be used for hover effect
+    // create the tooltip textbox
     var tooltipBar = createTooltip('#' + chartShow);
 
-    // create an array for svg element id's to create hover effect for heat map driving viz
-    var ageDataIdentificationHover = [];
-
     // create array of selections for hover effect
-    for (var q = 0; q < ageJson.length; q++) {
-        ageDataIdentificationHover[q] = d3.selectAll('rect#' + ageJson[q].id);
-        createHovers(ageDataIdentificationHover[q], tooltipBar, addCommas(ageJson[q].averageDrivingMiles) + ' Average Miles', true, false);
+    for (var q = 0; q < json.length; q++) {
+        barDataIdentificationHover[q] = d3.selectAll('rect#' + json[q].id);
+        createHovers(barDataIdentificationHover[q], tooltipBar, addCommas(json[q].yAxis) + ' Average Miles', true, false);
     }
 }
 
-/*
-** generate the heat map
-*/
+/****************************************
+*****************************************
+** generate the heatmap viz of how your
+** driving compares to all states
+*****************************************
+*****************************************/
 var heatMapUS = function (chartShow,
                         state, 
                         carMileage, 
-                        stateJson, 
-                        geoJson,
+                        json1, 
+                        json2,
                         colorScheme,
                         legendTitle,
                         tickNum,
@@ -263,7 +267,8 @@ var heatMapUS = function (chartShow,
     var margin = {top: 10, right: 15, bottom: 45, left: 75},
         width = 515 - margin.left - margin.right,
         height = 350 - margin.top - margin.bottom,
-        purple = ['#f1d8ee', '#e4b1de', '#b17eab', '#6f4f6b', '#422f40'];
+        purple = ['#f1d8ee', '#e4b1de', '#b17eab', '#6f4f6b', '#422f40'],
+        stateDataIdentificationHover = [];
 
     // prevent multiple svg's from being created
     d3.select('#' + chartShow).selectAll('svg').remove();
@@ -282,8 +287,12 @@ var heatMapUS = function (chartShow,
         .projection(projection);
 
     // calculate the domain of the heatmap
-    var minMiles = d3.min(stateJson, function(d) { return d.averageDrivingMiles; }),
-        maxMiles = d3.max(stateJson, function(d) { return d.averageDrivingMiles; });
+    var minMiles = d3.min(json1, function(d) { 
+            return d.domain; 
+        }),
+        maxMiles = d3.max(json1, function(d) { 
+            return d.domain; 
+        });
 
     // reset minMiles if personal mileage is less
     if (minMiles > carMileage) {
@@ -300,7 +309,7 @@ var heatMapUS = function (chartShow,
         
     // draw the map
     svg.selectAll('path')
-        .data(geoJson.features)
+        .data(json2.features)
         .enter()
         .append('path')
         .attr('d', path)
@@ -310,7 +319,7 @@ var heatMapUS = function (chartShow,
                 return 'state_' + i;
             })
         .style('fill', function(d) {
-            var value = d.properties.average_miles;
+            var value = d.properties.domain;
             return color(value);
         });
 
@@ -326,8 +335,12 @@ var heatMapUS = function (chartShow,
     linearGradient.selectAll('stop')
         .data(color.range())
         .enter().append('stop')
-        .attr('offset', function(d,i) { return i/(color.range().length-1);})
-        .attr('stop-color', function(d) { return d; });
+        .attr('offset', function(d,i) { 
+            return i/(color.range().length-1);
+        })
+        .attr('stop-color', function(d) { 
+            return d; 
+        });
 
     // make the legend - create the rect and fill with gradient
     var legendWidth = 175,
@@ -369,7 +382,6 @@ var heatMapUS = function (chartShow,
     // append the personal color legend
     var personalLegend = svg.append('g')
         .attr('transform', 'translate(395, 250)');
-        // 140, 310
 
     personalLegend.append('rect')
         .attr('width', personalLegendWidth)
@@ -391,17 +403,14 @@ var heatMapUS = function (chartShow,
         .attr('class', 'citation')
         .text(citationText);
 
-    // create the tooltip textbox and pass it back to be used for hover effect
+    // create the tooltip textbox
     var tooltipMap = createTooltip('#' + chartShow);
 
-    // create an array for svg element id's to create hover effect for heat map driving viz
-    var stateDataIdentificationHover = [];
-
     // create array of selections for hover effect
-    for (r = 0; r < stateJson.length; r++) {
+    for (r = 0; r < json1.length; r++) {
         stateDataIdentificationHover[r] = d3.selectAll('path#state_' + r);
-        createHovers(stateDataIdentificationHover[r], tooltipMap, geoJson.features[r].properties.name + 
-                    '\nAverage Miles: ' + addCommas(geoJson.features[r].properties.average_miles), false, false);
+        createHovers(stateDataIdentificationHover[r], tooltipMap, json2.features[r].properties.name + 
+                    '\nAverage Miles: ' + addCommas(json2.features[r].properties.domain), false, false);
     }
 }
 

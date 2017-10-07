@@ -1,6 +1,8 @@
-/*
+/****************************************
+*****************************************
 ** parse all json data
-*/
+*****************************************
+*****************************************/
 var parseAndRender = function() {
     d3.json('ageData.json', function(ageJson) {
         d3.json('stateData.json', function(stateJson) {
@@ -11,9 +13,12 @@ var parseAndRender = function() {
     })
 }
 
-/*
-** generate all viz variables from user input
-*/
+/****************************************
+*****************************************
+** generate all viz variables from user
+** input
+*****************************************
+*****************************************/
 var variables = function (ageJson, stateJson, geoJson) {
     // obtain all variables from profile page
     var age = document.getElementById('age').value,
@@ -171,12 +176,12 @@ var variables = function (ageJson, stateJson, geoJson) {
     if (pass) {
         hideShow('profile', 'visualization');
 
-        // if they drive, show the corresponding viz's
+        // if they drive, show the corresponding vizs
         if (carTransit) {
             document.getElementById('waffle-car').textContent = carMileageText;
             show('waffle-car-paragraph');
 
-            // parse and link age, state, and geo data jsons
+            // parse and link age, state, and geo data
             parseAgeData(age, carMileage, ageJson);
             parseStateData(state, carMileage, stateJson, geoJson);
     

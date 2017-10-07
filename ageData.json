@@ -1,38 +1,56 @@
 [
     {
         "ageRange": "16-19",
+        "bar": "16-19",
         "age": "16",
+        "color": "16",
         "averageDrivingMiles": 7624,
+        "yAxis": 7624,
         "id": "sixteen"
     },
     {
         "ageRange": "20-34",
+        "bar": "20-34",
         "age": "20",
+        "color": "20",
         "averageDrivingMiles": 15098,
+        "yAxis": 15098,
         "id": "twenty"
     },
     {
         "ageRange": "35-54",
+        "bar": "35-54",
         "age": "35",
+        "color": "35",
         "averageDrivingMiles": 15291,
+        "yAxis": 15291,
         "id": "thirty-five"
     },
     {
         "ageRange": "55-64",
+        "bar": "55-64",
         "age": "55",
+        "color": "55",
         "averageDrivingMiles": 11972,
+        "yAxis": 11972,
         "id": "fifty-five"
     },
     {
         "ageRange": "65+",
+        "bar": "65+",
         "age": "65",
+        "color": "65",
         "averageDrivingMiles": 7646,
+        "yAxis": 7646,
         "id": "sixty-five"
     },
     {
         "ageRange": "Overall",
+        "bar": "Overall",
         "age": "total",
+        "color": "total",
         "averageDrivingMiles": 13476,
+        "yAxis": 13476,
         "id": "overall"
     }
 ]
