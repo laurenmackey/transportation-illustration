@@ -128,12 +128,12 @@ var variables = function (ageJson, stateJson, geoJson) {
     hide('waffle-walk-paragraph');
     hide('waffle-public-paragraph');
     hide('driving-title');
-    hide('driving-paragraph-one');
-    hide('driving-one');
-    hide('driving-paragraph-div-one');
-    hide('driving-paragraph-two');
-    hide('driving-two');
-    hide('driving-paragraph-div-two');
+    hide('driving-bar-paragraph');
+    hide('driving-bar');
+    hide('driving-bar-paragraph-div');
+    hide('driving-heat-paragraph');
+    hide('driving-heat');
+    hide('driving-heat-paragraph-div');
     show('buffer'); 
 
     // yell at user if a field is blank
@@ -187,19 +187,19 @@ var variables = function (ageJson, stateJson, geoJson) {
     
             // show first driving viz and paragraph, plus hide buffer div
             show('driving-title');
-            show('driving-paragraph-one');
-            show('driving-paragraph-div-one');
-            show('driving-one');
-            show('driving-paragraph-two');
-            show('driving-paragraph-div-two');
-            show('driving-two');
+            show('driving-bar-paragraph');
+            show('driving-bar-paragraph-div');
+            show('driving-bar');
+            show('driving-heat-paragraph');
+            show('driving-heat-paragraph-div');
+            show('driving-heat');
             hide('buffer');
 
             // call waffleChart function to create the waffle chart transit breakdown viz
             waffleChart(milesTotal, waffleData);
     
             // call barChart function to create the age bar chart driving viz
-            barChart('driving-one',
+            barChart('driving-bar',
                    ageJson,
                    'Annual Miles', 
                    age, 
@@ -207,10 +207,11 @@ var variables = function (ageJson, stateJson, geoJson) {
                    15900, 
                    7,
                    'Your mileage',
-                   'Source: U.S. Dept. of Transportation');   
+                   'Source: U.S. Dept. of Transportation',
+                   ' Average Miles');   
     
             // call heatMap function to create the state driving heatmap viz
-            heatMapUS('driving-two', 
+            heatMapUS('driving-heat',
                     state, 
                     carMileage, 
                     stateJson, 
@@ -219,7 +220,8 @@ var variables = function (ageJson, stateJson, geoJson) {
                     'Average Annual Miles', 
                     4,
                     'Your Miles',
-                    'Source: U.S. Dept. of Transportation');
+                    'Source: U.S. Dept. of Transportation',
+                    '\nAverage Miles: ');
         }
 
         if (bicycleTransit) {

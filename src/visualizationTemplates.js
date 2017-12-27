@@ -101,7 +101,8 @@ var barChart = function (chartShow,
                         graphRange,
                         numberOfYTicks, 
                         legendText,
-                        citationText) {
+                        citationText,
+                        hoverText) {
  
     // declare variables
     var margin = {top: 10, right: 15, bottom: 45, left: 75},
@@ -113,13 +114,15 @@ var barChart = function (chartShow,
     // a value in the specified range
     var xScale = d3.scale.ordinal()
         .domain(json.map(function(d) {
-            return d.bar;
+            return getDomain(chartShow + '-x', d);
+            //return d.bar;
         }))
         .rangeRoundBands([0, width], 0.3);
  
     var yScale = d3.scale.linear()
         .domain([0, d3.max(json, function(d) {
-            return d.yAxis;
+            return getDomain(chartShow + '-y', d);
+            //return d.yAxis;
         })])
         .range([height, 0]);
  
@@ -191,13 +194,15 @@ var barChart = function (chartShow,
                 return d.id;
             })
             .attr('x', function(d) {
-                return xScale(d.bar);
+                return xScale(getDomain(chartShow + '-x', d));
+                //return xScale(d.bar);
             })
             .attr('y', function(d) {
-                return yScale(d.yAxis);
+                return yScale(getDomain(chartShow + '-y', d));
+                //return yScale(d.yAxis);
             })
             .attr('height', function(d) {
-                return height - yScale(d.yAxis);
+                return height - yScale(getDomain(chartShow + '-y', d));
             })
             .attr('width', xScale.rangeBand())
             .attr('fill', function(d,i) {
@@ -243,7 +248,7 @@ var barChart = function (chartShow,
     // create array of selections for hover effect
     for (var q = 0; q < json.length; q++) {
         barDataIdentificationHover[q] = d3.selectAll('rect#' + json[q].id);
-        createHovers(barDataIdentificationHover[q], tooltipBar, addCommas(json[q].yAxis) + ' Average Miles', true, false);
+        createHovers(barDataIdentificationHover[q], tooltipBar, addCommas(getDomain(chartShow + '-y', json[q])) + hoverText, true, false);
     }
 }
 
@@ -262,7 +267,8 @@ var heatMapUS = function (chartShow,
                         legendTitle,
                         tickNum,
                         personalLegendTitle,
-                        citationText) {
+                        citationText,
+                        hoverText) {
     // declare variables
     var margin = {top: 10, right: 15, bottom: 45, left: 75},
         width = 515 - margin.left - margin.right,
@@ -288,10 +294,10 @@ var heatMapUS = function (chartShow,
 
     // calculate the domain of the heatmap
     var minMiles = d3.min(json1, function(d) { 
-            return d.domain; 
+            return getDomain(chartShow, d);
         }),
         maxMiles = d3.max(json1, function(d) { 
-            return d.domain; 
+            return getDomain(chartShow, d);
         });
 
     // reset minMiles if personal mileage is less
@@ -301,7 +307,7 @@ var heatMapUS = function (chartShow,
 
     // set the colors
     var color = d3.scale.quantize()
-            .domain([minMiles, maxMiles]);
+        .domain([minMiles, maxMiles]);
 
     if (colorScheme == 'purple') {
         color.range(purple);
@@ -316,10 +322,10 @@ var heatMapUS = function (chartShow,
         .style('stroke', '#fff')
         .style('stroke-width', '1')
         .attr('id', function (d,i) {
-                return 'state_' + i;
-            })
+            return 'state_' + i;
+        })
         .style('fill', function(d) {
-            var value = d.properties.domain;
+            var value = getDomain(chartShow + '-map', d);
             return color(value);
         });
 
@@ -410,7 +416,7 @@ var heatMapUS = function (chartShow,
     for (r = 0; r < json1.length; r++) {
         stateDataIdentificationHover[r] = d3.selectAll('path#state_' + r);
         createHovers(stateDataIdentificationHover[r], tooltipMap, json2.features[r].properties.name + 
-                    '\nAverage Miles: ' + addCommas(json2.features[r].properties.domain), false, false);
+                    hoverText + addCommas(getDomain(chartShow + '-map', json2.features[r])), false, false);
     }
 }
 

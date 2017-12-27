@@ -1,3 +1,8 @@
+/****************************************
+*****************************************
+** enable typeahead on profile page
+*****************************************
+*****************************************/
 var typeaheadInitialize = function() {
     
     var substringMatcher = function(strs) {

@@ -158,7 +158,7 @@ var parseAgeData = function(age, carMileage, ageJson) {
     }
 
     // fill in the corresponding text
-    document.getElementById('driving-car').textContent = carMileageString;
+    document.getElementById('your-miles').textContent = carMileageString;
     document.getElementById('age-percent').textContent = agePercent;
     document.getElementById('age-moreless').textContent = ageMoreLess;
     document.getElementById('total-percent').textContent = totalPercent;
@@ -197,6 +197,8 @@ var parseStateData = function(state, carMileage, stateJson, geoJson) {
     // fill in the corresponding text
     document.getElementById('state-percent').textContent = statePercent;
     document.getElementById('state-moreless').textContent = stateMoreLess;
+    document.getElementById('state-name').textContent = state;
+    document.getElementById('state-miles').textContent = addCommas(stateMiles);
 
     // add state average mileage from stateJson to geoJson
     for (var c = 0; c < geoJson.features.length; c++) {
@@ -204,8 +206,31 @@ var parseStateData = function(state, carMileage, stateJson, geoJson) {
 
         for (var d = 0; d < stateJson.length; d++) {
             if (geoJsonState == stateJson[d].state) {
-                geoJson.features[c].properties.domain = stateJson[d].averageDrivingMiles;
+                geoJson.features[c].properties.averageDrivingMiles = stateJson[d].averageDrivingMiles;
             }
         }
+    }
+}
+
+/****************************************
+*****************************************
+** get the relevant domain for the given 
+** chart
+*****************************************
+*****************************************/
+var getDomain = function(chartShow, d) {
+    switch(chartShow) {
+        case 'driving-bar-x':
+            return d.ageRange;
+            break;
+        case 'driving-bar-y':
+            return d.averageDrivingMiles;
+            break;
+        case 'driving-heat':
+            return d.averageDrivingMiles;    
+            break;
+        case 'driving-heat-map':
+            return d.properties.averageDrivingMiles;
+            break;
     }
 }
