@@ -252,5 +252,8 @@ var getDomain = function(chartShow, d) {
         case 'commute-heat':
             return d.averageCommuteTime;
             break;
+        case 'commute-heat-map':
+            return d.properties.averageCommuteTime;
+            break;
     }
 }

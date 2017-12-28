@@ -242,7 +242,7 @@ var variables = function (ageJson, stateJson, geoJson) {
                     'purple', 
                     'Average One-Way Commute', 
                     4,
-                    'Your Commute Time',
+                    'Your Commute',
                     'Source: U.S. Census American Community Survey',
                     '\nAverage Commute Time: ');
 
