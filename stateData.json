@@ -1,206 +1,257 @@
 [
     {
         "state": "Alabama",
-        "averageDrivingMiles": 16054
+        "averageDrivingMiles": 16054,
+        "averageCommuteTime": 24.5
     },
     {
         "state": "Alaska",
-        "averageDrivingMiles": 9915
+        "averageDrivingMiles": 9915,
+        "averageCommuteTime": 18.9
     },
     {
         "state": "Arizona",
-        "averageDrivingMiles": 14493
+        "averageDrivingMiles": 14493,
+        "averageCommuteTime": 24.9
     },
     {
         "state": "Arkansas",
-        "averageDrivingMiles": 14974
+        "averageDrivingMiles": 14974,
+        "averageCommuteTime": 21.6
     },
     {
         "state": "California",
-        "averageDrivingMiles": 14435
+        "averageDrivingMiles": 14435,
+        "averageCommuteTime": 28.4
     },
     {
         "state": "Colorado",
-        "averageDrivingMiles": 13443
+        "averageDrivingMiles": 13443,
+        "averageCommuteTime": 24.9
     },
     {
         "state": "Connecticut",
-        "averageDrivingMiles": 11595
+        "averageDrivingMiles": 11595,
+        "averageCommuteTime": 25.7
     },
     {
         "state": "Delaware",
-        "averageDrivingMiles": 14802
+        "averageDrivingMiles": 14802,
+        "averageCommuteTime": 25.7
     },
     {
         "state": "District of Columbia",
-        "averageDrivingMiles": 10045
+        "averageDrivingMiles": 10045,
+        "averageCommuteTime": 29.9
     },
     {
         "state": "Florida",
-        "averageDrivingMiles": 11836
+        "averageDrivingMiles": 11836,
+        "averageCommuteTime": 26.7
     },
     {
         "state": "Georgia",
-        "averageDrivingMiles": 18920
+        "averageDrivingMiles": 18920,
+        "averageCommuteTime": 27.7
     },
     {
         "state": "Hawaii",
-        "averageDrivingMiles": 11104
+        "averageDrivingMiles": 11104,
+        "averageCommuteTime": 27.2
     },
     {
         "state": "Idaho",
-        "averageDrivingMiles": 15318
+        "averageDrivingMiles": 15318,
+        "averageCommuteTime": 20.4
     },
     {
         "state": "Illinois",
-        "averageDrivingMiles": 12921
+        "averageDrivingMiles": 12921,
+        "averageCommuteTime": 28.5
     },
     {
         "state": "Indiana",
-        "averageDrivingMiles": 17821
+        "averageDrivingMiles": 17821,
+        "averageCommuteTime": 23.4
     },
     {
         "state": "Iowa",
-        "averageDrivingMiles": 15074
+        "averageDrivingMiles": 15074,
+        "averageCommuteTime": 18.9
     },
     {
         "state": "Kansas",
-        "averageDrivingMiles": 14742
+        "averageDrivingMiles": 14742,
+        "averageCommuteTime": 19.2
     },
     {
         "state": "Kentucky",
-        "averageDrivingMiles": 17370
+        "averageDrivingMiles": 17370,
+        "averageCommuteTime": 23
     },
     {
         "state": "Louisiana",
-        "averageDrivingMiles": 14805
+        "averageDrivingMiles": 14805,
+        "averageCommuteTime": 25.2
     },
     {
         "state": "Maine",
-        "averageDrivingMiles": 15420
+        "averageDrivingMiles": 15420,
+        "averageCommuteTime": 23.7
     },
     {
         "state": "Maryland",
-        "averageDrivingMiles": 14834
+        "averageDrivingMiles": 14834,
+        "averageCommuteTime": 32.4
     },
     {
         "state": "Massachusetts",
-        "averageDrivingMiles": 11759 
+        "averageDrivingMiles": 11759,
+        "averageCommuteTime": 29
     },
     {
         "state": "Michigan",
-        "averageDrivingMiles": 14121
+        "averageDrivingMiles": 14121,
+        "averageCommuteTime": 24.3
     },
     {
         "state": "Minnesota",
-        "averageDrivingMiles": 17887
+        "averageDrivingMiles": 17887,
+        "averageCommuteTime": 23.2
     },
     {
         "state": "Mississippi",
-        "averageDrivingMiles": 17699
+        "averageDrivingMiles": 17699,
+        "averageCommuteTime": 24.2
     },
     {
         "state": "Missouri",
-        "averageDrivingMiles": 17396
+        "averageDrivingMiles": 17396,
+        "averageCommuteTime": 23.4
     },
     {
         "state": "Montana",
-        "averageDrivingMiles": 14556
+        "averageDrivingMiles": 14556,
+        "averageCommuteTime": 17.9
     },
     {
         "state": "Nebraska",
-        "averageDrivingMiles": 15128
+        "averageDrivingMiles": 15128,
+        "averageCommuteTime": 18.3
     },
     {
         "state": "Nevada",
-        "averageDrivingMiles": 12869
+        "averageDrivingMiles": 12869,
+        "averageCommuteTime": 23.9
     },
     {
         "state": "New Hampshire",
-        "averageDrivingMiles": 12931
+        "averageDrivingMiles": 12931,
+        "averageCommuteTime": 26.9
     },
     {
         "state": "New Jersey",
-        "averageDrivingMiles": 11927
+        "averageDrivingMiles": 11927,
+        "averageCommuteTime": 31.2
     },
     {
         "state": "New Mexico",
-        "averageDrivingMiles": 18369
+        "averageDrivingMiles": 18369,
+        "averageCommuteTime": 21.7
     },
     {
         "state": "New York",
-        "averageDrivingMiles": 11871
+        "averageDrivingMiles": 11871,
+        "averageCommuteTime": 32.6
     },
     {
         "state": "North Carolina",
-        "averageDrivingMiles": 15729
+        "averageDrivingMiles": 15729,
+        "averageCommuteTime": 24.1
     },
     {
         "state": "North Dakota",
-        "averageDrivingMiles": 15725
+        "averageDrivingMiles": 15725,
+        "averageCommuteTime": 17.3
     },
     {
         "state": "Ohio",
-        "averageDrivingMiles": 12906
+        "averageDrivingMiles": 12906,
+        "averageCommuteTime": 23.3
     },
     {
         "state": "Oklahoma",
-        "averageDrivingMiles": 18891
+        "averageDrivingMiles": 18891,
+        "averageCommuteTime": 21.4
     },
     {
         "state": "Oregon",
-        "averageDrivingMiles": 14032
+        "averageDrivingMiles": 14032,
+        "averageCommuteTime": 23.2
     },
     {
         "state": "Pennsylvania",
-        "averageDrivingMiles": 12435
+        "averageDrivingMiles": 12435,
+        "averageCommuteTime": 26.5
     },
     {
         "state": "Rhode Island",
-        "averageDrivingMiles": 12781
+        "averageDrivingMiles": 12781,
+        "averageCommuteTime": 24.4
     },
     {
         "state": "South Carolina",
-        "averageDrivingMiles": 16020
+        "averageDrivingMiles": 16020,
+        "averageCommuteTime": 24.1
     },
     {
         "state": "South Dakota",
-        "averageDrivingMiles": 15505
+        "averageDrivingMiles": 15505,
+        "averageCommuteTime": 16.9
     },
     {
         "state": "Tennessee",
-        "averageDrivingMiles": 15462
+        "averageDrivingMiles": 15462,
+        "averageCommuteTime": 24.7
     },
     {
         "state": "Texas",
-        "averageDrivingMiles": 16347
+        "averageDrivingMiles": 16347,
+        "averageCommuteTime": 25.9
     },
     {
         "state": "Utah",
-        "averageDrivingMiles": 15442
+        "averageDrivingMiles": 15442,
+        "averageCommuteTime": 21.6
     },
     {
         "state": "Vermont",
-        "averageDrivingMiles": 13458
+        "averageDrivingMiles": 13458,
+        "averageCommuteTime": 22.7
     },
     {
         "state": "Virginia",
-        "averageDrivingMiles": 15464
+        "averageDrivingMiles": 15464,
+        "averageCommuteTime": 28.1
     },
     {
         "state": "Washington",
-        "averageDrivingMiles": 12837
+        "averageDrivingMiles": 12837,
+        "averageCommuteTime": 26.7
     },
     {
         "state": "West Virginia",
-        "averageDrivingMiles": 14283
+        "averageDrivingMiles": 14283,
+        "averageCommuteTime": 25.6
     },
     {
         "state": "Wisconsin",
-        "averageDrivingMiles": 15188
+        "averageDrivingMiles": 15188,
+        "averageCommuteTime": 21.9
     },
     {
         "state": "Wyoming",
-        "averageDrivingMiles": 21821
+        "averageDrivingMiles": 21821,
+        "averageCommuteTime": 18.1
     }
 ]

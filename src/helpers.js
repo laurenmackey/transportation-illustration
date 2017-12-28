@@ -171,10 +171,13 @@ var parseAgeData = function(age, carMileage, ageJson) {
 ** text
 *****************************************
 *****************************************/
-var parseStateData = function(state, carMileage, stateJson, geoJson) {
+var parseStateData = function(state, carMileage, commute, stateJson, geoJson) {
     var stateMiles,
         stateMoreLess,
-        statePercent;
+        statePercent,
+        stateCommute,
+        commuteMoreLess,
+        commuteDifference;
 
     // generate dynamic text for state comparison
     for (var b = 0; b < stateJson.length; b++) {
@@ -182,6 +185,8 @@ var parseStateData = function(state, carMileage, stateJson, geoJson) {
         {
             stateMiles = stateJson[b].averageDrivingMiles;
             stateMiles.toString();
+            stateCommute = stateJson[b].averageCommuteTime;
+            stateCommute.toString();
         }
     }
 
@@ -194,11 +199,22 @@ var parseStateData = function(state, carMileage, stateJson, geoJson) {
         stateMoreLess = 'more';
     }
 
+    commuteDifference = stateCommute - commute;
+
+    if (commuteDifference > 0) {
+        commuteMoreLess = 'less';
+    } else {
+        commuteMoreLess = 'more';
+    }
+
     // fill in the corresponding text
     document.getElementById('state-percent').textContent = statePercent;
     document.getElementById('state-moreless').textContent = stateMoreLess;
     document.getElementById('state-name').textContent = state;
     document.getElementById('state-miles').textContent = addCommas(stateMiles);
+    document.getElementById('your-commute-minutes').textContent = addCommas(commute);
+    document.getElementById('commute-difference').textContent = addCommas(Math.abs(commuteDifference));
+    document.getElementById('commute-moreless').textContent = commuteMoreLess;
 
     // add state average mileage from stateJson to geoJson
     for (var c = 0; c < geoJson.features.length; c++) {
@@ -207,6 +223,7 @@ var parseStateData = function(state, carMileage, stateJson, geoJson) {
         for (var d = 0; d < stateJson.length; d++) {
             if (geoJsonState == stateJson[d].state) {
                 geoJson.features[c].properties.averageDrivingMiles = stateJson[d].averageDrivingMiles;
+                geoJson.features[c].properties.averageCommuteTime = stateJson[d].averageCommuteTime;
             }
         }
     }
@@ -231,6 +248,9 @@ var getDomain = function(chartShow, d) {
             break;
         case 'driving-heat-map':
             return d.properties.averageDrivingMiles;
+            break;
+        case 'commute-heat':
+            return d.averageCommuteTime;
             break;
     }
 }

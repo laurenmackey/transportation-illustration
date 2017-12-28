@@ -26,7 +26,7 @@ var variables = function (ageJson, stateJson, geoJson) {
         transitTypes = document.getElementsByClassName('transit-types'),
         transitMiles = document.getElementsByClassName('transit-miles'),
         work = document.getElementsByClassName('work'),
-        commute = document.getElementById('commute').value;
+        commute = Number(document.getElementById('commute').value);
 
     // determine state variable from county input
     var commaLocation = county.search(","),
@@ -137,7 +137,7 @@ var variables = function (ageJson, stateJson, geoJson) {
     show('buffer'); 
 
     // yell at user if a field is blank
-    /*if (age == 'Select age range' || !county || !transitTypes[1].value 
+    if (age == 'Select age range' || !county || !transitTypes[1].value 
         || !transitMiles[0].value || !work[1].value || commute == 'Select commute time') {
         pass = false;
         show('field-alert');
@@ -162,7 +162,14 @@ var variables = function (ageJson, stateJson, geoJson) {
         }
     }
 
-    // yell at user if they've inputted a non-numeric mileage
+    // yell at user if they've inputted a non-numeric mileage or commute
+    if (isNaN(commute)) {
+        pass = false;
+        show('numeric-alert');
+        hide('mileage-alert');
+        hide('field-alert');
+    }
+
     for (var m = 0; m < milesLength; m++) {
         if (isNaN(transitMiles[m].value)) {
             pass = false;
@@ -170,7 +177,7 @@ var variables = function (ageJson, stateJson, geoJson) {
             hide('mileage-alert');
             hide('field-alert');
         }
-    }*/
+    }
 
     // if all is well, hide profile and show visualization page on Next click
     if (pass) {
@@ -183,7 +190,7 @@ var variables = function (ageJson, stateJson, geoJson) {
 
             // parse and link age, state, and geo data
             parseAgeData(age, carMileage, ageJson);
-            parseStateData(state, carMileage, stateJson, geoJson);
+            parseStateData(state, carMileage, commute, stateJson, geoJson);
     
             // show first driving viz and paragraph, plus hide buffer div
             show('driving-title');
@@ -223,6 +230,21 @@ var variables = function (ageJson, stateJson, geoJson) {
                     'Source: U.S. Dept. of Transportation',
                     '\nAverage Miles: ');
         }
+
+        show('commute-heat-paragraph');
+        show('commute-heat-paragraph-div');
+        show('commute-heat');
+        heatMapUS('commute-heat',
+                    state, 
+                    commute, 
+                    stateJson, 
+                    geoJson, 
+                    'purple', 
+                    'Average One-Way Commute', 
+                    4,
+                    'Your Commute Time',
+                    'Source: U.S. Census American Community Survey',
+                    '\nAverage Commute Time: ');
 
         if (bicycleTransit) {
             document.getElementById('waffle-bicycle').textContent = bicycleMileageText;

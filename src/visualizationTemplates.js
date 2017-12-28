@@ -260,7 +260,7 @@ var barChart = function (chartShow,
 *****************************************/
 var heatMapUS = function (chartShow,
                         state, 
-                        carMileage, 
+                        heatParameter, 
                         json1, 
                         json2,
                         colorScheme,
@@ -293,21 +293,21 @@ var heatMapUS = function (chartShow,
         .projection(projection);
 
     // calculate the domain of the heatmap
-    var minMiles = d3.min(json1, function(d) { 
+    var min = d3.min(json1, function(d) { 
             return getDomain(chartShow, d);
         }),
-        maxMiles = d3.max(json1, function(d) { 
+        max = d3.max(json1, function(d) { 
             return getDomain(chartShow, d);
         });
 
-    // reset minMiles if personal mileage is less
-    if (minMiles > carMileage) {
-        minMiles = carMileage;
+    // reset min if personal mileage is less
+    if (min > heatParameter) {
+        min = heatParameter;
     }
 
     // set the colors
     var color = d3.scale.quantize()
-        .domain([minMiles, maxMiles]);
+        .domain([min, max]);
 
     if (colorScheme == 'purple') {
         color.range(purple);
@@ -373,7 +373,7 @@ var heatMapUS = function (chartShow,
     // add labeled ticks to the legend
     var xScale = d3.scale.linear()
         .range([-legendWidth/2, legendWidth/2])
-        .domain([minMiles, maxMiles]);
+        .domain([min, max]);
     
     var xAxis = d3.svg.axis()
         .orient('bottom')
@@ -392,7 +392,7 @@ var heatMapUS = function (chartShow,
     personalLegend.append('rect')
         .attr('width', personalLegendWidth)
         .attr('height', legendHeight)
-        .attr('fill', color(carMileage));
+        .attr('fill', color(heatParameter));
 
     // add the title to the personal legend
     legend.append('text')
