@@ -6,8 +6,12 @@
 var parseAndRender = function() {
     d3.json('ageData.json', function(ageJson) {
         d3.json('stateData.json', function(stateJson) {
-            d3.json('us-states.json', function(geoJson) {
-                variables(ageJson, stateJson, geoJson);
+            d3.json('usStates.json', function(geoJson) {
+                d3.json('countyData.json', function(countyJson) {
+                    d3.json('usCounties.json', function(countyGeoJson) {
+                        variables(ageJson, stateJson, geoJson, countyJson, countyGeoJson);
+                    })
+                })
             })
         })
     })
@@ -19,7 +23,7 @@ var parseAndRender = function() {
 ** input
 *****************************************
 *****************************************/
-var variables = function (ageJson, stateJson, geoJson) {
+var variables = function (ageJson, stateJson, geoJson, countyJson, countyGeoJson) {
     // obtain all variables from profile page
     var age = document.getElementById('age').value,
         county = document.getElementById('county').value,
@@ -97,6 +101,14 @@ var variables = function (ageJson, stateJson, geoJson) {
         }
     }
 
+    age = 16;
+    county = 'Autauga County, Alabama';
+    carTransit = true;
+    carMileage = 1778;
+    commute = 32;
+    state = 'Alabama';
+    milesTotal = 1778;
+
     // push corrresponding transit data to waffle viz array
     if (carTransit) {        
         waffleData[index] = {'method': 'car', 'mileage': carMileage, 'display': 'Car: \n'};
@@ -137,7 +149,7 @@ var variables = function (ageJson, stateJson, geoJson) {
     show('buffer'); 
 
     // yell at user if a field is blank
-    if (age == 'Select age range' || !county || !transitTypes[1].value 
+    /*if (age == 'Select age range' || !county || !transitTypes[1].value 
         || !transitMiles[0].value || !work[1].value || commute == 'Select commute time') {
         pass = false;
         show('field-alert');
@@ -177,7 +189,7 @@ var variables = function (ageJson, stateJson, geoJson) {
             hide('mileage-alert');
             hide('field-alert');
         }
-    }
+    }*/
 
     // if all is well, hide profile and show visualization page on Next click
     if (pass) {
@@ -190,7 +202,7 @@ var variables = function (ageJson, stateJson, geoJson) {
 
             // parse and link age, state, and geo data
             parseAgeData(age, carMileage, ageJson);
-            parseStateData(state, carMileage, commute, stateJson, geoJson);
+            parseStateData(state, carMileage, commute, stateJson, geoJson, countyJson, countyGeoJson);
     
             // show first driving viz and paragraph, plus hide buffer div
             show('driving-title');

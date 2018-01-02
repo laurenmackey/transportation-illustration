@@ -171,7 +171,7 @@ var parseAgeData = function(age, carMileage, ageJson) {
 ** text
 *****************************************
 *****************************************/
-var parseStateData = function(state, carMileage, commute, stateJson, geoJson) {
+var parseStateData = function(state, carMileage, commute, stateJson, geoJson, countyJson, countyGeoJson) {
     var stateMiles,
         stateMoreLess,
         statePercent,
@@ -206,6 +206,8 @@ var parseStateData = function(state, carMileage, commute, stateJson, geoJson) {
     } else {
         commuteMoreLess = 'more';
     }
+
+    // ***START HERE BY LINKING AVG COMMUTE TIME DATA FROM countyJson TO countyGeoJson***
 
     // fill in the corresponding text
     document.getElementById('state-percent').textContent = statePercent;
