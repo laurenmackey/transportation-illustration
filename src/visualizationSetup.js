@@ -6,10 +6,10 @@
 var parseAndRender = function() {
     d3.json('ageData.json', function(ageJson) {
         d3.json('stateData.json', function(stateJson) {
-            d3.json('usStates.json', function(geoJson) {
+            d3.json('usStates.json', function(stateGeoJson) {
                 d3.json('countyData.json', function(countyJson) {
                     d3.json('usCounties.json', function(countyGeoJson) {
-                        variables(ageJson, stateJson, geoJson, countyJson, countyGeoJson);
+                        variables(ageJson, stateJson, stateGeoJson, countyJson, countyGeoJson);
                     })
                 })
             })
@@ -23,7 +23,7 @@ var parseAndRender = function() {
 ** input
 *****************************************
 *****************************************/
-var variables = function (ageJson, stateJson, geoJson, countyJson, countyGeoJson) {
+var variables = function (ageJson, stateJson, stateGeoJson, countyJson, countyGeoJson) {
     // obtain all variables from profile page
     var age = document.getElementById('age').value,
         county = document.getElementById('county').value,
@@ -202,7 +202,7 @@ var variables = function (ageJson, stateJson, geoJson, countyJson, countyGeoJson
 
             // parse and link age, state, and geo data
             parseAgeData(age, carMileage, ageJson);
-            parseStateData(state, carMileage, commute, stateJson, geoJson, countyJson, countyGeoJson);
+            parseGeoData(state, county, carMileage, commute, stateJson, stateGeoJson, countyJson, countyGeoJson);
     
             // show first driving viz and paragraph, plus hide buffer div
             show('driving-title');
@@ -234,7 +234,7 @@ var variables = function (ageJson, stateJson, geoJson, countyJson, countyGeoJson
                     state, 
                     carMileage, 
                     stateJson, 
-                    geoJson, 
+                    stateGeoJson, 
                     'purple', 
                     'Average Annual Miles', 
                     4,
@@ -250,7 +250,7 @@ var variables = function (ageJson, stateJson, geoJson, countyJson, countyGeoJson
                     state, 
                     commute, 
                     stateJson, 
-                    geoJson, 
+                    stateGeoJson, 
                     'purple', 
                     'Average One-Way Commute', 
                     4,

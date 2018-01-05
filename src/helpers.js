@@ -57,6 +57,30 @@ var round = function (value, precision) {
 
 /****************************************
 *****************************************
+** return a string of more or less
+** depending on passed-in parameters
+*****************************************
+*****************************************/
+var determineMoreLess = function(a, b) {
+    if (a < b) {
+        return 'less';
+    } else {
+        return 'more';
+    }
+}
+
+/****************************************
+*****************************************
+** fill the text of the passed-in html
+** element with the passed-in text
+*****************************************
+*****************************************/
+var fillText = function(id, fillText) {
+    document.getElementById(id).textContent = fillText;
+}
+
+/****************************************
+*****************************************
 ** create the tooltip textbox
 *****************************************
 *****************************************/
@@ -102,6 +126,26 @@ var createHovers = function(hoverSelection, tooltip, myText,
 
 /****************************************
 *****************************************
+** add data from one JSON to another
+*****************************************
+*****************************************/
+var addToJson = function(fromJson, toJson) {
+    for (var d = 0; d < toJson.features.length; d++) {
+        var currentGeo = toJson.features[d].properties.name;
+
+        for (var e = 0; e < fromJson.length; e++) {
+            if (currentGeo == fromJson[e].state) {
+                toJson.features[d].properties.averageDrivingMiles = fromJson[e].averageDrivingMiles;
+                toJson.features[d].properties.averageCommuteTime = fromJson[e].averageCommuteTime;
+            } else if (currentGeo == fromJson[e].county) {
+                toJson.features[d].properties.averageCommuteTime = fromJson[e].averageCommuteTime;
+            }
+        }
+    }
+}
+
+/****************************************
+*****************************************
 ** parse age data and generate dynamic
 ** text
 *****************************************
@@ -123,46 +167,32 @@ var parseAgeData = function(age, carMileage, ageJson) {
     } else {
         for (var aa = 0; aa < ageJson.length; aa++) {
             if (ageJson[aa].age == age) {
-                ageMiles = ageJson[aa].averageDrivingMiles;
-                ageMiles.toString();
+                ageMiles = ageJson[aa].averageDrivingMiles.toString();
             }
         }
     }
 
     agePercent = addCommas(Math.floor(Math.abs((ageMiles - carMileage) / ageMiles * 100)));
     agePercent = String(agePercent) + '%';
-    
-    if (carMileage < ageMiles) {
-        ageMoreLess = 'less';
-    } else {
-        ageMoreLess = 'more';
-    }
+    ageMoreLess = determineMoreLess(carMileage, ageMiles);
 
     // get total miles and generate dynamic text for
     // total comparison
     for (var a = 0; a < ageJson.length; a++) {
-        if (ageJson[a].age == 'total')
-        {
-            totalMiles = ageJson[a].averageDrivingMiles;
-            totalMiles.toString();
+        if (ageJson[a].age == 'total') {
+            totalMiles = ageJson[a].averageDrivingMiles.toString();
         }
     }
 
-    totalPercent = addCommas(Math.floor(Math.abs((totalMiles - carMileage) / totalMiles * 100)));
-    totalPercent = String(totalPercent) + '%';
-
-    if (carMileage < totalMiles) {
-        totalMoreLess = 'less';
-    } else {
-        totalMoreLess = 'more';
-    }
+    totalPercent = String(addCommas(Math.floor(Math.abs((totalMiles - carMileage) / totalMiles * 100)))) + '%';
+    totalMoreLess = determineMoreLess(carMileage, totalMiles);
 
     // fill in the corresponding text
-    document.getElementById('your-miles').textContent = carMileageString;
-    document.getElementById('age-percent').textContent = agePercent;
-    document.getElementById('age-moreless').textContent = ageMoreLess;
-    document.getElementById('total-percent').textContent = totalPercent;
-    document.getElementById('total-moreless').textContent = totalMoreLess;
+    fillText('your-miles', carMileageString);
+    fillText('age-percent', agePercent);
+    fillText('age-moreless', ageMoreLess);
+    fillText('total-percent', totalPercent);
+    fillText('total-moreless', totalMoreLess);
 }
 
 /****************************************
@@ -171,64 +201,59 @@ var parseAgeData = function(age, carMileage, ageJson) {
 ** text
 *****************************************
 *****************************************/
-var parseStateData = function(state, carMileage, commute, stateJson, geoJson, countyJson, countyGeoJson) {
+var parseGeoData = function(state, county, carMileage, commute, stateJson, 
+                            stateGeoJson, countyJson, countyGeoJson) {
     var stateMiles,
         stateMoreLess,
         statePercent,
         stateCommute,
-        commuteMoreLess,
-        commuteDifference;
+        stateCommuteMoreLess,
+        stateCommuteDifference,
+        countyCommute,
+        countyCommuteMoreLess,
+        countyCommuteDifference;
 
     // generate dynamic text for state comparison
     for (var b = 0; b < stateJson.length; b++) {
         if (stateJson[b].state == state)
         {
-            stateMiles = stateJson[b].averageDrivingMiles;
-            stateMiles.toString();
-            stateCommute = stateJson[b].averageCommuteTime;
-            stateCommute.toString();
+            stateMiles = stateJson[b].averageDrivingMiles.toString();
+            stateCommute = stateJson[b].averageCommuteTime.toString();
         }
     }
 
-    statePercent = addCommas(Math.floor(Math.abs((stateMiles - carMileage) / stateMiles * 100)));
-    statePercent = String(statePercent) + '%';
+    statePercent = String(addCommas(Math.floor(Math.abs((stateMiles - carMileage) / stateMiles * 100)))) + '%';
+    stateMoreLess = determineMoreLess(carMileage, stateMiles);
+    stateCommuteDifference = round(stateCommute - commute, 2);
+    stateCommuteMoreLess = determineMoreLess(0, stateCommuteDifference);
 
-    if (carMileage < stateMiles) {
-        stateMoreLess = 'less';
-    } else {
-        stateMoreLess = 'more';
+    // generate dynamic text for county comparison
+    for (var c = 0; c < countyJson.length; c++) {
+        if (countyJson[c].county == county)
+        {
+            countyCommute = countyJson[c].averageCommuteTime.toString();
+        }
     }
 
-    commuteDifference = stateCommute - commute;
-
-    if (commuteDifference > 0) {
-        commuteMoreLess = 'less';
-    } else {
-        commuteMoreLess = 'more';
-    }
-
-    // ***START HERE BY LINKING AVG COMMUTE TIME DATA FROM countyJson TO countyGeoJson***
+    countyCommuteDifference = round(countyCommute - commute, 2);
+    countyCommuteMoreLess = determineMoreLess(0, countyCommuteDifference);
 
     // fill in the corresponding text
-    document.getElementById('state-percent').textContent = statePercent;
-    document.getElementById('state-moreless').textContent = stateMoreLess;
-    document.getElementById('state-name').textContent = state;
-    document.getElementById('state-miles').textContent = addCommas(stateMiles);
-    document.getElementById('your-commute-minutes').textContent = addCommas(commute);
-    document.getElementById('commute-difference').textContent = addCommas(Math.abs(commuteDifference));
-    document.getElementById('commute-moreless').textContent = commuteMoreLess;
+    fillText('state-percent', statePercent);
+    fillText('state-moreless', stateMoreLess);
+    fillText('state-name', state);
+    fillText('state-miles', addCommas(stateMiles));
+    fillText('your-commute-minutes', addCommas(commute));
+    fillText('state-commute-difference', addCommas(Math.abs(stateCommuteDifference)));
+    fillText('state-commute-moreless', stateCommuteMoreLess);
+    fillText('county-commute-difference', addCommas(Math.abs(countyCommuteDifference)));
+    fillText('county-commute-moreless', countyCommuteMoreLess);
 
-    // add state average mileage from stateJson to geoJson
-    for (var c = 0; c < geoJson.features.length; c++) {
-        var geoJsonState = geoJson.features[c].properties.name;
+    // add state average mileage from stateJson to stateGeoJson
+    addToJson(stateJson, stateGeoJson);
 
-        for (var d = 0; d < stateJson.length; d++) {
-            if (geoJsonState == stateJson[d].state) {
-                geoJson.features[c].properties.averageDrivingMiles = stateJson[d].averageDrivingMiles;
-                geoJson.features[c].properties.averageCommuteTime = stateJson[d].averageCommuteTime;
-            }
-        }
-    }
+    // add county average commute from countyJson to countyGeoJson
+    addToJson(countyJson, countyGeoJson);
 }
 
 /****************************************
