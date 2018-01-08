@@ -126,19 +126,34 @@ var createHovers = function(hoverSelection, tooltip, myText,
 
 /****************************************
 *****************************************
-** add data from one JSON to another
+** add data from one state JSON to another
 *****************************************
 *****************************************/
-var addToJson = function(fromJson, toJson) {
-    for (var d = 0; d < toJson.features.length; d++) {
-        var currentGeo = toJson.features[d].properties.name;
+var addToStateJson = function(fromJson, toJson) {
+    for (var i in toJson.features) {
+        var currentGeoName = toJson.features[i].properties.name;
 
-        for (var e = 0; e < fromJson.length; e++) {
-            if (currentGeo == fromJson[e].state) {
-                toJson.features[d].properties.averageDrivingMiles = fromJson[e].averageDrivingMiles;
-                toJson.features[d].properties.averageCommuteTime = fromJson[e].averageCommuteTime;
-            } else if (currentGeo == fromJson[e].county) {
-                toJson.features[d].properties.averageCommuteTime = fromJson[e].averageCommuteTime;
+        for (var j in fromJson) {
+            if (currentGeoName == fromJson[j].state) {
+                toJson.features[i].properties.averageDrivingMiles = fromJson[j].averageDrivingMiles;
+                toJson.features[i].properties.averageCommuteTime = fromJson[j].averageCommuteTime;
+            }
+        }
+    }
+}
+
+/****************************************
+*****************************************
+** add data from one county JSON to another
+*****************************************
+*****************************************/
+var addToCountyJson = function(fromJson, toJson) {
+    for (var i in toJson.features) {
+         var currentGeoId = toJson.features[i].properties.geo_id;
+
+        for (var j in fromJson) {
+            if (currentGeoId == fromJson[j].id) {
+                toJson.features[i].properties.averageCommuteTime = fromJson[j].averageCommuteTime;
             }
         }
     }
@@ -165,9 +180,9 @@ var parseAgeData = function(age, carMileage, ageJson) {
         agePercent = '100%';
         ageMiles = 0; 
     } else {
-        for (var aa = 0; aa < ageJson.length; aa++) {
-            if (ageJson[aa].age == age) {
-                ageMiles = ageJson[aa].averageDrivingMiles.toString();
+        for (var i in ageJson) {
+            if (ageJson[i].age == age) {
+                ageMiles = ageJson[i].averageDrivingMiles.toString();
             }
         }
     }
@@ -178,9 +193,9 @@ var parseAgeData = function(age, carMileage, ageJson) {
 
     // get total miles and generate dynamic text for
     // total comparison
-    for (var a = 0; a < ageJson.length; a++) {
-        if (ageJson[a].age == 'total') {
-            totalMiles = ageJson[a].averageDrivingMiles.toString();
+    for (var j in ageJson) {
+        if (ageJson[j].age == 'total') {
+            totalMiles = ageJson[j].averageDrivingMiles.toString();
         }
     }
 
@@ -214,11 +229,11 @@ var parseGeoData = function(state, county, carMileage, commute, stateJson,
         countyCommuteDifference;
 
     // generate dynamic text for state comparison
-    for (var b = 0; b < stateJson.length; b++) {
-        if (stateJson[b].state == state)
+    for (var i in stateJson) {
+        if (stateJson[i].state == state)
         {
-            stateMiles = stateJson[b].averageDrivingMiles.toString();
-            stateCommute = stateJson[b].averageCommuteTime.toString();
+            stateMiles = stateJson[i].averageDrivingMiles.toString();
+            stateCommute = stateJson[i].averageCommuteTime.toString();
         }
     }
 
@@ -228,10 +243,10 @@ var parseGeoData = function(state, county, carMileage, commute, stateJson,
     stateCommuteMoreLess = determineMoreLess(0, stateCommuteDifference);
 
     // generate dynamic text for county comparison
-    for (var c = 0; c < countyJson.length; c++) {
-        if (countyJson[c].county == county)
+    for (var j in countyJson) {
+        if (countyJson[j].county == county)
         {
-            countyCommute = countyJson[c].averageCommuteTime.toString();
+            countyCommute = countyJson[j].averageCommuteTime.toString();
         }
     }
 
@@ -250,10 +265,33 @@ var parseGeoData = function(state, county, carMileage, commute, stateJson,
     fillText('county-commute-moreless', countyCommuteMoreLess);
 
     // add state average mileage from stateJson to stateGeoJson
-    addToJson(stateJson, stateGeoJson);
+    addToStateJson(stateJson, stateGeoJson);
 
     // add county average commute from countyJson to countyGeoJson
-    addToJson(countyJson, countyGeoJson);
+    addToCountyJson(countyJson, countyGeoJson);
+}
+
+/****************************************
+*****************************************
+** returns countyGeoJSON data based on 
+** the user's state
+*****************************************
+*****************************************/
+var filterCountyGeoJson = function(county, countyJson, countyGeoJson) {
+    var stateId,
+        personalCountyData = [];
+
+    for (var i in countyJson) {
+        if (county == countyJson[i].county) {
+            stateId = countyJson[i].id.substring(countyJson[i].id.indexOf('US') + 2, countyJson[i].id.indexOf('US') + 4);
+        }   
+    }
+    
+   personalCountyData = countyGeoJson.features.filter(function(d) {
+       return d.properties.state == stateId;
+   })
+
+    return personalCountyData;
 }
 
 /****************************************
@@ -269,6 +307,9 @@ var getDomain = function(chartShow, d) {
             break;
         case 'driving-bar-y':
             return d.averageDrivingMiles;
+            break;
+        case 'driving-bar-color':
+            return d.age;
             break;
         case 'driving-heat':
             return d.averageDrivingMiles;    

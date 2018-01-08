@@ -149,7 +149,7 @@ var variables = function (ageJson, stateJson, stateGeoJson, countyJson, countyGe
     show('buffer'); 
 
     // yell at user if a field is blank
-    /*if (age == 'Select age range' || !county || !transitTypes[1].value 
+    if (age == 'Select age range' || !county || !transitTypes[1].value 
         || !transitMiles[0].value || !work[1].value || commute == 'Select commute time') {
         pass = false;
         show('field-alert');
@@ -159,7 +159,7 @@ var variables = function (ageJson, stateJson, stateGeoJson, countyJson, countyGe
 
     // yell at user if they've inputted mileage without a transit, or vice versa
     for (var k = 1; k < 3; k++) {
-        for (var l = 0; l < milesLength; l++) {
+        for (var l in milesLength) {
             if ((transitTypes[k].value && !transitMiles[l].value) 
                 || (!transitTypes[k].value && transitMiles[l].value)) {
                 pass = false;
@@ -182,18 +182,19 @@ var variables = function (ageJson, stateJson, stateGeoJson, countyJson, countyGe
         hide('field-alert');
     }
 
-    for (var m = 0; m < milesLength; m++) {
+    for (var m in milesLength) {
         if (isNaN(transitMiles[m].value)) {
             pass = false;
             show('numeric-alert');
             hide('mileage-alert');
             hide('field-alert');
         }
-    }*/
+    }
 
     // if all is well, hide profile and show visualization page on Next click
     if (pass) {
         hideShow('profile', 'visualization');
+        parseGeoData(state, county, carMileage, commute, stateJson, stateGeoJson, countyJson, countyGeoJson);
 
         // if they drive, show the corresponding vizs
         if (carTransit) {
@@ -202,7 +203,6 @@ var variables = function (ageJson, stateJson, stateGeoJson, countyJson, countyGe
 
             // parse and link age, state, and geo data
             parseAgeData(age, carMileage, ageJson);
-            parseGeoData(state, county, carMileage, commute, stateJson, stateGeoJson, countyJson, countyGeoJson);
     
             // show first driving viz and paragraph, plus hide buffer div
             show('driving-title');
@@ -243,20 +243,23 @@ var variables = function (ageJson, stateJson, stateGeoJson, countyJson, countyGe
                     '\nAverage Miles: ');
         }
 
+        var personalCountyData = filterCountyGeoJson(county, countyJson, countyGeoJson);
+        //console.log(personalCountyData);
+
         show('commute-heat-paragraph');
         show('commute-heat-paragraph-div');
         show('commute-heat');
         heatMapUS('commute-heat',
-                    state, 
+                    county, 
                     commute, 
-                    stateJson, 
-                    stateGeoJson, 
+                    countyJson, 
+                    personalCountyData, 
                     'purple', 
                     'Average One-Way Commute', 
                     4,
                     'Your Commute',
                     'Source: U.S. Census American Community Survey',
-                    '\nAverage Commute Time: ');
+                    ' County\nAverage Commute: ');
 
         if (bicycleTransit) {
             document.getElementById('waffle-bicycle').textContent = bicycleMileageText;
