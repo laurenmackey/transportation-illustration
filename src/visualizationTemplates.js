@@ -292,9 +292,10 @@ var heatMapUS = function (chartShow,
             var data = json2.features;
             break;
         case 'commute-heat':
-            var projection = d3.geo.albersUsa()
-                .translate([width/2.125 * -1, height/2.3 * -1])
-                .scale([2900]);
+            var projection = d3.geo.albers()
+                .center([-2, 35])
+                //.translate([width/2.125 * -1, height/2.3 * -1])
+                //.scale([2900])
             var data = json2;
             break;
     }

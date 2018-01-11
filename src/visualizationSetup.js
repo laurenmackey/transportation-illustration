@@ -102,11 +102,13 @@ var variables = function (ageJson, stateJson, stateGeoJson, countyJson, countyGe
     }
 
     age = 16;
-    county = 'Autauga County, Alabama';
+    county = 'Sacramento County, California';
+    //county = 'Bullock County, Alabama';
     carTransit = true;
     carMileage = 1778;
     commute = 32;
-    state = 'Alabama';
+    //state = 'Alabama';
+    state = 'California';
     milesTotal = 1778;
 
     // push corrresponding transit data to waffle viz array
@@ -149,7 +151,7 @@ var variables = function (ageJson, stateJson, stateGeoJson, countyJson, countyGe
     show('buffer'); 
 
     // yell at user if a field is blank
-    if (age == 'Select age range' || !county || !transitTypes[1].value 
+    /*if (age == 'Select age range' || !county || !transitTypes[1].value 
         || !transitMiles[0].value || !work[1].value || commute == 'Select commute time') {
         pass = false;
         show('field-alert');
@@ -189,7 +191,7 @@ var variables = function (ageJson, stateJson, stateGeoJson, countyJson, countyGe
             hide('mileage-alert');
             hide('field-alert');
         }
-    }
+    }*/
 
     // if all is well, hide profile and show visualization page on Next click
     if (pass) {
@@ -243,8 +245,8 @@ var variables = function (ageJson, stateJson, stateGeoJson, countyJson, countyGe
                     '\nAverage Miles: ');
         }
 
-        var personalCountyData = filterCountyGeoJson(county, countyJson, countyGeoJson);
-        //console.log(personalCountyData);
+        var geoCountyData = filterCountyGeoJson(county, countyJson, countyGeoJson);
+        var countyData = filterCountyJson(state, countyJson);
 
         show('commute-heat-paragraph');
         show('commute-heat-paragraph-div');
@@ -252,8 +254,8 @@ var variables = function (ageJson, stateJson, stateGeoJson, countyJson, countyGe
         heatMapUS('commute-heat',
                     county, 
                     commute, 
-                    countyJson, 
-                    personalCountyData, 
+                    countyData, 
+                    geoCountyData, 
                     'purple', 
                     'Average One-Way Commute', 
                     4,

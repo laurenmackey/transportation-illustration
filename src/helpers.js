@@ -279,7 +279,7 @@ var parseGeoData = function(state, county, carMileage, commute, stateJson,
 *****************************************/
 var filterCountyGeoJson = function(county, countyJson, countyGeoJson) {
     var stateId,
-        personalCountyData = [];
+        countyGeoData = [];
 
     for (var i in countyJson) {
         if (county == countyJson[i].county) {
@@ -287,11 +287,27 @@ var filterCountyGeoJson = function(county, countyJson, countyGeoJson) {
         }   
     }
     
-   personalCountyData = countyGeoJson.features.filter(function(d) {
+   countyGeoData = countyGeoJson.features.filter(function(d) {
        return d.properties.state == stateId;
    })
 
-    return personalCountyData;
+    return countyGeoData;
+}
+
+/****************************************
+*****************************************
+** returns countyJSON data based on 
+** the user's state
+*****************************************
+*****************************************/
+var filterCountyJson = function(state, countyJson) {
+    var stateData = [];
+
+    stateData = countyJson.filter(function(d) {
+        return d.county.substring(d.county.indexOf(',') + 2) == state;
+    })
+
+    return stateData;
 }
 
 /****************************************
