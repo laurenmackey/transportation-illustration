@@ -273,6 +273,7 @@ var heatMapUS = function (chartShow,
         width = 515 - margin.left - margin.right,
         height = 350 - margin.top - margin.bottom,
         purple = ['#f1d8ee', '#e4b1de', '#b17eab', '#6f4f6b', '#422f40'],
+        blue = ['#d2e6f2', '#6baed6', '#4a7995', '#2a4555', '#0a1115'],
         geoDataIdentificationHover = [];
 
     // prevent multiple svg's from being created
@@ -287,15 +288,17 @@ var heatMapUS = function (chartShow,
     switch(chartShow) {
         case 'driving-heat': 
             var projection = d3.geo.albersUsa()
-                .translate([width/2, height/2])
+                .translate([width / 2, height / 2])
                 .scale([600]);
             var data = json2.features;
             break;
         case 'commute-heat':
             var projection = d3.geo.albers()
-                .center([-2, 35])
-                //.translate([width/2.125 * -1, height/2.3 * -1])
-                //.scale([2900])
+                var projection = d3.geo.albers() 
+                    .translate([width / 2, height / 2]) 
+                    //.scale(myScale) 
+                    .rotate([-json2.averageLat, 0]) 
+                    .center([0, json2.averageLong]); 
             var data = json2;
             break;
     }
@@ -324,10 +327,13 @@ var heatMapUS = function (chartShow,
         case 'purple':
             color.range(purple);
             break;
+        case 'blue':
+            color.range(blue);
+            break;
     }
         
     // draw the map
-    svg.selectAll('path')
+    var myState = svg.selectAll('path')
         .data(data)
         .enter()
         .append('path')
@@ -341,6 +347,27 @@ var heatMapUS = function (chartShow,
             var value = getDomain(chartShow + '-map', d);
             return color(value);
         });
+
+    var bounds = path.bounds(json2),
+        // dx = bounds[1][0] - bounds[0][0],
+        // dy = bounds[1][1] - bounds[0][1],
+        // x = (bounds[0][0] + bounds[1][0]) / 2,
+        // y = (bounds[0][1] + bounds[1][1]) / 2,
+        // FIX TO BE ACTUAL dx, dy, x, and y (not calculating correctly now)
+        dx = 482,
+        dy = 272,
+        x = 482 / 2,
+        y = 272 / 2,
+        myScale = 1.9 / Math.max(dx / width, dy / height),
+        translate = [width / 2 - myScale * x, height / 2 - myScale * y];
+
+    // fix so this only applies to county heatmap, not full US
+    myState.transition()
+        //.duration(5000)
+        .style("stroke-width", 1.5 / myScale + "px")
+        .attr("transform", "translate(" + translate + ")scale(" + myScale + ")");
+
+    projection.scale(myScale);
 
     // make the legend - set the gradient
     var linearGradient = svg.append('defs')

@@ -287,9 +287,45 @@ var filterCountyGeoJson = function(county, countyJson, countyGeoJson) {
         }   
     }
     
-   countyGeoData = countyGeoJson.features.filter(function(d) {
-       return d.properties.state == stateId;
-   })
+    countyGeoData = countyGeoJson.features.filter(function(d) {
+        return d.properties.state == stateId;
+    })
+
+    var allLats = [],
+        allLongs = [],
+        maxCoords = {},
+        minCoords = {};
+
+    for (var j in countyGeoData) {
+        currentCity = countyGeoData[j].geometry;
+        var currentLat,
+            currentLong;
+        
+        if (currentCity.type == 'Polygon') {
+            for (var k in currentCity.coordinates[0]) {
+                currentLat = currentCity.coordinates[0][k][0];
+                currentLong = currentCity.coordinates[0][k][1];
+                allLats.push(currentLat);
+                allLongs.push(currentLong);
+            }
+        } else {
+            for (var k in currentCity.coordinates) {
+                for (var l in currentCity.coordinates[k][0]) {
+                    currentLat = currentCity.coordinates[k][0][l][0];
+                    currentLong = currentCity.coordinates[k][0][l][1];  
+                    allLats.push(currentLat);
+                    allLongs.push(currentLong);
+                }
+            } 
+        }
+    }
+
+    countyGeoData.minLat = Math.min.apply(null, allLats);
+    countyGeoData.minLong = Math.min.apply(null, allLongs);
+    countyGeoData.maxLat = Math.max.apply(null, allLats);
+    countyGeoData.maxLong = Math.max.apply(null, allLongs);
+    countyGeoData.averageLat = (countyGeoData.maxLat + countyGeoData.minLat) / 2;
+    countyGeoData.averageLong = (countyGeoData.maxLong + countyGeoData.minLong) / 2;
 
     return countyGeoData;
 }

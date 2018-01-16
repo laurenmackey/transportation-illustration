@@ -102,13 +102,13 @@ var variables = function (ageJson, stateJson, stateGeoJson, countyJson, countyGe
     }
 
     age = 16;
-    county = 'Sacramento County, California';
-    //county = 'Bullock County, Alabama';
+    //county = 'Sacramento County, California';
+    county = 'Bullock County, Alabama';
     carTransit = true;
     carMileage = 1778;
     commute = 32;
-    //state = 'Alabama';
-    state = 'California';
+    state = 'Alabama';
+    //state = 'California';
     milesTotal = 1778;
 
     // push corrresponding transit data to waffle viz array
@@ -256,7 +256,7 @@ var variables = function (ageJson, stateJson, stateGeoJson, countyJson, countyGe
                     commute, 
                     countyData, 
                     geoCountyData, 
-                    'purple', 
+                    'blue', 
                     'Average One-Way Commute', 
                     4,
                     'Your Commute',
