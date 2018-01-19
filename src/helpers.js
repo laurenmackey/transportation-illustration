@@ -348,6 +348,24 @@ var filterCountyJson = function(state, countyJson) {
 
 /****************************************
 *****************************************
+** returns stateJSON data based on 
+** the user's state
+*****************************************
+*****************************************/
+var filterStateJson = function(state, stateGeoJson) {
+    var justStateData = [];
+
+    for (var i in stateGeoJson.features) {
+        if (stateGeoJson.features[i].properties.name == state) {
+            justStateData.push(stateGeoJson.features[i])
+        } 
+    }
+
+    return justStateData;
+}
+
+/****************************************
+*****************************************
 ** get the relevant domain for the given 
 ** chart
 *****************************************

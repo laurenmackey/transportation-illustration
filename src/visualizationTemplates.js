@@ -260,7 +260,8 @@ var barChart = function (chartShow,
 var heatMapUS = function (chartShow,
                         geo, 
                         heatParameter, 
-                        json1, 
+                        json1,
+                        stateData, 
                         json2,
                         colorScheme,
                         legendTitle,
@@ -296,7 +297,7 @@ var heatMapUS = function (chartShow,
             var projection = d3.geo.albers()
                 var projection = d3.geo.albers() 
                     .translate([width / 2, height / 2]) 
-                    //.scale(myScale) 
+                    .scale(1000) 
                     .rotate([-json2.averageLat, 0]) 
                     .center([0, json2.averageLong]); 
             var data = json2;
@@ -348,26 +349,18 @@ var heatMapUS = function (chartShow,
             return color(value);
         });
 
-    var bounds = path.bounds(json2),
-        // dx = bounds[1][0] - bounds[0][0],
-        // dy = bounds[1][1] - bounds[0][1],
-        // x = (bounds[0][0] + bounds[1][0]) / 2,
-        // y = (bounds[0][1] + bounds[1][1]) / 2,
-        // FIX TO BE ACTUAL dx, dy, x, and y (not calculating correctly now)
-        dx = 482,
-        dy = 272,
-        x = 482 / 2,
-        y = 272 / 2,
-        myScale = 1.9 / Math.max(dx / width, dy / height),
+    var bounds = path.bounds(stateData[0]),
+        dx = bounds[1][0] - bounds[0][0],
+        dy = bounds[1][1] - bounds[0][1],
+        x = (bounds[0][0] + bounds[1][0]) / 2,
+        y = (bounds[0][1] + bounds[1][1]) / 2,
+        myScale = 0.9 / Math.max(dx / width, dy / height),
         translate = [width / 2 - myScale * x, height / 2 - myScale * y];
 
     // fix so this only applies to county heatmap, not full US
     myState.transition()
-        //.duration(5000)
         .style("stroke-width", 1.5 / myScale + "px")
         .attr("transform", "translate(" + translate + ")scale(" + myScale + ")");
-
-    projection.scale(myScale);
 
     // make the legend - set the gradient
     var linearGradient = svg.append('defs')

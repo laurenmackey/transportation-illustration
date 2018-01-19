@@ -232,21 +232,23 @@ var variables = function (ageJson, stateJson, stateGeoJson, countyJson, countyGe
                    ' Average Miles');   
     
             // call heatMap function to create the state driving heatmap viz
-            heatMapUS('driving-heat',
-                    state, 
-                    carMileage, 
-                    stateJson, 
-                    stateGeoJson, 
-                    'purple', 
-                    'Average Annual Miles', 
-                    4,
-                    'Your Miles',
-                    'Source: U.S. Dept. of Transportation',
-                    '\nAverage Miles: ');
+            // heatMapUS('driving-heat',
+            //         state, 
+            //         carMileage, 
+            //         stateJson, 
+            //         null,
+            //         stateGeoJson, 
+            //         'purple', 
+            //         'Average Annual Miles', 
+            //         4,
+            //         'Your Miles',
+            //         'Source: U.S. Dept. of Transportation',
+            //         '\nAverage Miles: ');
         }
 
         var geoCountyData = filterCountyGeoJson(county, countyJson, countyGeoJson);
         var countyData = filterCountyJson(state, countyJson);
+        var stateData = filterStateJson(state, stateGeoJson);
 
         show('commute-heat-paragraph');
         show('commute-heat-paragraph-div');
@@ -255,6 +257,7 @@ var variables = function (ageJson, stateJson, stateGeoJson, countyJson, countyGe
                     county, 
                     commute, 
                     countyData, 
+                    stateData,
                     geoCountyData, 
                     'blue', 
                     'Average One-Way Commute', 
