@@ -101,15 +101,15 @@ var variables = function (ageJson, stateJson, stateGeoJson, countyJson, countyGe
         }
     }
 
-    age = 16;
-    //county = 'Sacramento County, California';
-    county = 'Bullock County, Alabama';
-    carTransit = true;
-    carMileage = 1778;
-    commute = 32;
-    state = 'Alabama';
-    //state = 'California';
-    milesTotal = 1778;
+    // age = 16;
+    // //county = 'Sacramento County, California';
+    // county = 'Baker County, Oregon';
+    // carTransit = true;
+    // carMileage = 1778;
+    // commute = 32;
+    // state = 'Oregon';
+    // //state = 'California';
+    // milesTotal = 1778;
 
     // push corrresponding transit data to waffle viz array
     if (carTransit) {        
@@ -151,7 +151,7 @@ var variables = function (ageJson, stateJson, stateGeoJson, countyJson, countyGe
     show('buffer'); 
 
     // yell at user if a field is blank
-    /*if (age == 'Select age range' || !county || !transitTypes[1].value 
+    if (age == 'Select age range' || !county || !transitTypes[1].value 
         || !transitMiles[0].value || !work[1].value || commute == 'Select commute time') {
         pass = false;
         show('field-alert');
@@ -191,7 +191,7 @@ var variables = function (ageJson, stateJson, stateGeoJson, countyJson, countyGe
             hide('mileage-alert');
             hide('field-alert');
         }
-    }*/
+    }
 
     // if all is well, hide profile and show visualization page on Next click
     if (pass) {
@@ -232,18 +232,18 @@ var variables = function (ageJson, stateJson, stateGeoJson, countyJson, countyGe
                    ' Average Miles');   
     
             // call heatMap function to create the state driving heatmap viz
-            // heatMapUS('driving-heat',
-            //         state, 
-            //         carMileage, 
-            //         stateJson, 
-            //         null,
-            //         stateGeoJson, 
-            //         'purple', 
-            //         'Average Annual Miles', 
-            //         4,
-            //         'Your Miles',
-            //         'Source: U.S. Dept. of Transportation',
-            //         '\nAverage Miles: ');
+            heatMapUS('driving-heat',
+                    state, 
+                    carMileage, 
+                    stateJson, 
+                    null,
+                    stateGeoJson, 
+                    'purple', 
+                    'Average Annual Miles', 
+                    4,
+                    'Your Miles',
+                    'Source: U.S. Dept. of Transportation',
+                    '\nAverage Miles: ');
         }
 
         var geoCountyData = filterCountyGeoJson(county, countyJson, countyGeoJson);
