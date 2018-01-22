@@ -101,15 +101,15 @@ var variables = function (ageJson, stateJson, stateGeoJson, countyJson, countyGe
         }
     }
 
-    // age = 16;
-    // //county = 'Sacramento County, California';
-    // county = 'Baker County, Oregon';
-    // carTransit = true;
-    // carMileage = 1778;
-    // commute = 32;
-    // state = 'Oregon';
-    // //state = 'California';
-    // milesTotal = 1778;
+    age = 16;
+    //county = 'Sacramento County, California';
+    county = 'Baker County, Oregon';
+    carTransit = true;
+    carMileage = 1778;
+    commute = 32;
+    state = 'Oregon';
+    //state = 'California';
+    milesTotal = 1778;
 
     // push corrresponding transit data to waffle viz array
     if (carTransit) {        
@@ -151,7 +151,7 @@ var variables = function (ageJson, stateJson, stateGeoJson, countyJson, countyGe
     show('buffer'); 
 
     // yell at user if a field is blank
-    if (age == 'Select age range' || !county || !transitTypes[1].value 
+    /*if (age == 'Select age range' || !county || !transitTypes[1].value 
         || !transitMiles[0].value || !work[1].value || commute == 'Select commute time') {
         pass = false;
         show('field-alert');
@@ -191,7 +191,7 @@ var variables = function (ageJson, stateJson, stateGeoJson, countyJson, countyGe
             hide('mileage-alert');
             hide('field-alert');
         }
-    }
+    }*/
 
     // if all is well, hide profile and show visualization page on Next click
     if (pass) {
@@ -235,8 +235,8 @@ var variables = function (ageJson, stateJson, stateGeoJson, countyJson, countyGe
             heatMapUS('driving-heat',
                     state, 
                     carMileage, 
-                    stateJson, 
-                    null,
+                    stateJson,
+                    null, 
                     stateGeoJson, 
                     'purple', 
                     'Average Annual Miles', 
@@ -246,9 +246,9 @@ var variables = function (ageJson, stateJson, stateGeoJson, countyJson, countyGe
                     '\nAverage Miles: ');
         }
 
-        var geoCountyData = filterCountyGeoJson(county, countyJson, countyGeoJson);
-        var countyData = filterCountyJson(state, countyJson);
-        var stateData = filterStateJson(state, stateGeoJson);
+        var countyJsonFiltered = filterCountyByState(state, countyJson),
+            stateGeoJsonFiltered = filterStateGeoByState(state, stateGeoJson),
+            countyGeoJsonFiltered = filterCountyGeoByState(county, countyJson, countyGeoJson);
 
         show('commute-heat-paragraph');
         show('commute-heat-paragraph-div');
@@ -256,9 +256,9 @@ var variables = function (ageJson, stateJson, stateGeoJson, countyJson, countyGe
         heatMapUS('commute-heat',
                     county, 
                     commute, 
-                    countyData, 
-                    stateData,
-                    geoCountyData, 
+                    countyJsonFiltered, 
+                    stateGeoJsonFiltered,
+                    countyGeoJsonFiltered, 
                     'blue', 
                     'Average One-Way Commute', 
                     4,

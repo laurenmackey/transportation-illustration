@@ -83,7 +83,7 @@ var waffleChart = function (milesTotal, waffleData) {
     // create array of selections for hover effect
     for (var k in Object.keys(waffleData)) {
         waffleDataClassHover[k] = d3.selectAll('rect.' + waffleData[k].method);
-        createHovers(waffleDataClassHover[k], tooltipWaffle, waffleData[k].display + waffleData[k].percent + ' of your transit', false, true);
+        createHovers(waffleDataClassHover[k], tooltipWaffle, waffleData[k].display + waffleData[k].percent + ' of your transit', 'waffle');
     }
 }
 
@@ -94,7 +94,7 @@ var waffleChart = function (milesTotal, waffleData) {
 *****************************************
 *****************************************/
 var barChart = function (chartShow, 
-                        json, 
+                        dataset, 
                         xText, 
                         highlightValue, 
                         personalLineNum, 
@@ -113,14 +113,14 @@ var barChart = function (chartShow,
     // create x and y scale functions that map each value in the domain to 
     // a value in the specified range
     var xScale = d3.scale.ordinal()
-        .domain(json.map(function(d) {
+        .domain(dataset.map(function(d) {
             return getDomain(chartShow + '-x', d);
             //return d.bar;
         }))
         .rangeRoundBands([0, width], 0.3);
  
     var yScale = d3.scale.linear()
-        .domain([0, d3.max(json, function(d) {
+        .domain([0, d3.max(dataset, function(d) {
             return getDomain(chartShow + '-y', d);
             //return d.yAxis;
         })])
@@ -186,7 +186,7 @@ var barChart = function (chartShow,
  
     // append the bars
     var bar = svg.selectAll('.bar')
-        .data(json)
+        .data(dataset)
         .enter()
         .append('rect')
             .attr('class', 'bar')
@@ -246,9 +246,9 @@ var barChart = function (chartShow,
     var tooltipBar = createTooltip('#' + chartShow);
 
     // create array of selections for hover effect
-    for (var i in json) {
-        barDataIdentificationHover[i] = d3.selectAll('rect#' + json[i].id);
-        createHovers(barDataIdentificationHover[i], tooltipBar, addCommas(getDomain(chartShow + '-y', json[i])) + hoverText, true, false);
+    for (var i in dataset) {
+        barDataIdentificationHover[i] = d3.selectAll('rect#' + dataset[i].id);
+        createHovers(barDataIdentificationHover[i], tooltipBar, addCommas(getDomain(chartShow + '-y', dataset[i])) + hoverText, chartShow);
     }
 }
 
@@ -260,9 +260,9 @@ var barChart = function (chartShow,
 var heatMapUS = function (chartShow,
                         geo, 
                         heatParameter, 
-                        json1,
-                        stateData, 
-                        json2,
+                        qualDataset,
+                        stateGeoDataset,
+                        geoDataset,
                         colorScheme,
                         legendTitle,
                         tickNum,
@@ -291,15 +291,15 @@ var heatMapUS = function (chartShow,
             var projection = d3.geo.albersUsa()
                 .translate([width / 2, height / 2])
                 .scale([600]);
-            var data = json2.features;
+            var data = geoDataset.features;
             break;
         case 'commute-heat':
             var projection = d3.geo.albers()
                 .translate([width / 2, height / 2]) 
                 .scale(1000) 
-                .rotate([-json2.averageLat, 0]) 
-                .center([0, json2.averageLong]); 
-            var data = json2;
+                .rotate([-geoDataset.averageLat, 0]) 
+                .center([0, geoDataset.averageLong]); 
+            var data = geoDataset;
             break;
     }
 
@@ -307,10 +307,10 @@ var heatMapUS = function (chartShow,
         .projection(projection);
 
     // calculate the domain of the heatmap
-    var min = d3.min(json1, function(d) { 
+    var min = d3.min(qualDataset, function(d) { 
             return getDomain(chartShow, d);
         }),
-        max = d3.max(json1, function(d) { 
+        max = d3.max(qualDataset, function(d) { 
             return getDomain(chartShow, d);
         });
 
@@ -349,7 +349,7 @@ var heatMapUS = function (chartShow,
         });
 
     if (chartShow == 'commute-heat') {
-        var bounds = path.bounds(stateData[0]),
+        var bounds = path.bounds(stateGeoDataset[0]),
             dx = bounds[1][0] - bounds[0][0],
             dy = bounds[1][1] - bounds[0][1],
             x = (bounds[0][0] + bounds[1][0]) / 2,
@@ -448,20 +448,18 @@ var heatMapUS = function (chartShow,
     // create array of selections for hover effect
     switch(chartShow) {
         case 'driving-heat': 
-            for (var i in json1) {
+            for (var i in qualDataset) {
                 geoDataIdentificationHover[i] = d3.selectAll('path#' + chartShow + '-geo-' + i);
-                createHovers(geoDataIdentificationHover[i], tooltipMap, json2.features[i].properties.name + 
-                            hoverText + addCommas(getDomain(chartShow + '-map', json2.features[i])), false, false);
+                createHovers(geoDataIdentificationHover[i], tooltipMap, geoDataset.features[i].properties.name + 
+                            hoverText + addCommas(getDomain(chartShow + '-map', geoDataset.features[i])), chartShow);
             }
             break;
         case 'commute-heat':
-            for (var j in json1) {
+            for (var j in qualDataset) {
                 geoDataIdentificationHover[j] = d3.selectAll('path#' + chartShow + '-geo-' + j);
-                createHovers(geoDataIdentificationHover[j], tooltipMap, json2[j].properties.name + 
-                            hoverText + json2[j].properties.averageCommuteTime, true, false);
+                createHovers(geoDataIdentificationHover[j], tooltipMap, geoDataset[j].properties.name + 
+                            hoverText + geoDataset[j].properties.averageCommuteTime, chartShow);
             }
             break;
     }
 }
-
-

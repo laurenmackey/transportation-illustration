@@ -96,23 +96,28 @@ var createTooltip = function(id) {
 ** create the hover-for-info effect
 *****************************************
 *****************************************/
-var createHovers = function(hoverSelection, tooltip, myText, 
-                            barChartBool, waffleChartBool) {
+var createHovers = function(hoverSelection, tooltip, myText, chartShow) {
     // create the hover in effect
     hoverSelection.on('mouseover', function(d,i) {
         hoverSelection.style('opacity', '0.7');
-        if (barChartBool) {
-            tooltip.text(myText);
-            tooltip.style('left', Number(d3.select(this).attr('x')) + 64 + 'px');
-            tooltip.style('top', Number(d3.select(this).attr('y')) - 52 + 'px');
-        } else if (waffleChartBool) {
-            tooltip.text(myText);
-            tooltip.style('left', (d3.select(this).attr('x')) + 'px');
-            tooltip.style('top', -65 + 'px')
-        } else {
-            tooltip.text(myText);
-            tooltip.style('left', event.clientX - 760 + 'px');
-            tooltip.style('top', event.clientY - 400 + 'px');
+        tooltip.text(myText);
+        switch(chartShow) {
+            case 'waffle':
+                tooltip.style('left', (d3.select(this).attr('x')) + 'px');
+                tooltip.style('top', -65 + 'px');
+                break;
+            case 'driving-bar':
+                tooltip.style('left', Number(d3.select(this).attr('x')) + 64 + 'px');
+                tooltip.style('top', Number(d3.select(this).attr('y')) - 52 + 'px');
+                break;
+            case 'commute-heat':
+                tooltip.style('left', event.clientX - 200 + 'px');
+                tooltip.style('top', event.clientY - 450 + 'px');
+                break;
+            default: 
+                tooltip.style('left', event.clientX - 760 + 'px');
+                tooltip.style('top', event.clientY - 400 + 'px');
+                break;
         }
         return tooltip.style('display', 'block');
     }); 
@@ -273,21 +278,23 @@ var parseGeoData = function(state, county, carMileage, commute, stateJson,
 
 /****************************************
 *****************************************
-** returns countyGeoJSON data based on 
-** the user's state
+** returns filtered countyGeoJson data
+** based on the user's state
 *****************************************
 *****************************************/
-var filterCountyGeoJson = function(county, countyJson, countyGeoJson) {
+var filterCountyGeoByState = function(county, countyJson, countyGeoJson) {
     var stateId,
-        countyGeoData = [];
+        stateGeoData = [];
 
+    // get the appropriate state ID for this county from the countyJson file
     for (var i in countyJson) {
         if (county == countyJson[i].county) {
             stateId = countyJson[i].id.substring(countyJson[i].id.indexOf('US') + 2, countyJson[i].id.indexOf('US') + 4);
         }   
     }
     
-    countyGeoData = countyGeoJson.features.filter(function(d) {
+    // add data for the full state to the stateGeoData array
+    stateGeoData = countyGeoJson.features.filter(function(d) {
         return d.properties.state == stateId;
     })
 
@@ -296,8 +303,8 @@ var filterCountyGeoJson = function(county, countyJson, countyGeoJson) {
         maxCoords = {},
         minCoords = {};
 
-    for (var j in countyGeoData) {
-        currentCity = countyGeoData[j].geometry;
+    for (var j in stateGeoData) {
+        currentCity = stateGeoData[j].geometry;
         var currentLat,
             currentLong;
         
@@ -320,23 +327,23 @@ var filterCountyGeoJson = function(county, countyJson, countyGeoJson) {
         }
     }
 
-    countyGeoData.minLat = Math.min.apply(null, allLats);
-    countyGeoData.minLong = Math.min.apply(null, allLongs);
-    countyGeoData.maxLat = Math.max.apply(null, allLats);
-    countyGeoData.maxLong = Math.max.apply(null, allLongs);
-    countyGeoData.averageLat = (countyGeoData.maxLat + countyGeoData.minLat) / 2;
-    countyGeoData.averageLong = (countyGeoData.maxLong + countyGeoData.minLong) / 2;
+    stateGeoData.minLat = Math.min.apply(null, allLats);
+    stateGeoData.minLong = Math.min.apply(null, allLongs);
+    stateGeoData.maxLat = Math.max.apply(null, allLats);
+    stateGeoData.maxLong = Math.max.apply(null, allLongs);
+    stateGeoData.averageLat = (stateGeoData.maxLat + stateGeoData.minLat) / 2;
+    stateGeoData.averageLong = (stateGeoData.maxLong + stateGeoData.minLong) / 2;
 
-    return countyGeoData;
+    return stateGeoData;
 }
 
 /****************************************
 *****************************************
-** returns countyJSON data based on 
-** the user's state
+** returns filtered countyJson data based 
+** on the user's state
 *****************************************
 *****************************************/
-var filterCountyJson = function(state, countyJson) {
+var filterCountyByState = function(state, countyJson) {
     var stateData = [];
 
     stateData = countyJson.filter(function(d) {
@@ -348,20 +355,20 @@ var filterCountyJson = function(state, countyJson) {
 
 /****************************************
 *****************************************
-** returns stateJSON data based on 
-** the user's state
+** returns filtered stateGeoJson data
+** based on the user's state
 *****************************************
 *****************************************/
-var filterStateJson = function(state, stateGeoJson) {
-    var justStateData = [];
+var filterStateGeoByState = function(state, stateGeoJson) {
+    var stateGeoData = [];
 
     for (var i in stateGeoJson.features) {
         if (stateGeoJson.features[i].properties.name == state) {
-            justStateData.push(stateGeoJson.features[i])
+            stateGeoData.push(stateGeoJson.features[i])
         } 
     }
 
-    return justStateData;
+    return stateGeoData;
 }
 
 /****************************************
