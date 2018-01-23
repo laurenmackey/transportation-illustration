@@ -365,7 +365,7 @@ var heatMapUS = function (chartShow,
     // make the legend - set the gradient
     var linearGradient = svg.append('defs')
         .append('linearGradient')
-        .attr('id', 'linear-gradient')
+        .attr('id', 'linear-gradient' + chartShow)
         .attr('x1', '0%')
         .attr('y1', '0%')
         .attr('x2', '100%')
@@ -387,13 +387,13 @@ var heatMapUS = function (chartShow,
         personalLegendWidth = 50;
 
     var legend = svg.append('g')
-        .attr('transform', 'translate(250, 310)');
+        .attr('transform', 'translate(250, 310)'); 
 
     legend.append('rect')
         .attr('width', legendWidth)
         .attr('height', legendHeight)
         .attr('transform', 'translate(20, 0)')
-        .attr('fill', 'url(#linear-gradient)');
+        .attr('fill', 'url(#linear-gradient' + chartShow + ')');
 
     // add the title to the legend
     legend.append('text')
