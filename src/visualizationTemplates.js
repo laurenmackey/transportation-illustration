@@ -206,33 +206,43 @@ var barChart = function (chartShow,
             })
             .attr('width', xScale.rangeBand())
             .attr('fill', function(d,i) {
-                return getDomain(chartShow + '-color', d) == highlightValue?'#98df8a':'#6baed6';
+                switch(chartShow) {
+                    case 'commute-method-bar':
+                        return (getDomain(chartShow + '-color', d) == highlightValue[0] 
+                                || getDomain(chartShow + '-color', d) == highlightValue[1]) ? '#98df8a' : '#6baed6';
+                        break;
+                    default:
+                        return getDomain(chartShow + '-color', d) == highlightValue ? '#98df8a' : '#6baed6';
+                        break;
+                }
             });
  
     // append the line to show personal amount
-    var personalLine = svg.append('line')
-        .attr('class', 'personal-line')
-        .attr('x1', 0)
-        .attr('x2', width)
-        .attr('y1', yScale(personalLineNum))
-        .attr('y2', yScale(personalLineNum));
- 
-    // append the graph legend if their mileage is in the y range
-    if (personalLineNum <= graphRange) {
-        var legend = svg.append('g')
-            .attr('transform', 'translate(-80, 0)');
-    
-        legend.append('rect')
-            .attr('x', width - 30)
-            .attr('width', 30)
-            .attr('height', 3)
-            .attr('class', 'legend-line');
-    
-        legend.append('text')
-            .attr('x', 432)
-            .attr('y', 5)
-            .attr('class', 'legend')
-            .text(legendText);
+    if (personalLineNum) {
+       var personalLine = svg.append('line')
+           .attr('class', 'personal-line')
+           .attr('x1', 0)
+           .attr('x2', width)
+           .attr('y1', yScale(personalLineNum))
+           .attr('y2', yScale(personalLineNum));
+
+           // append the graph legend if their mileage is in the y range
+        if (personalLineNum <= graphRange) {
+            var legend = svg.append('g')
+                .attr('transform', 'translate(-80, 0)');
+        
+            legend.append('rect')
+                .attr('x', width - 30)
+                .attr('width', 30)
+                .attr('height', 3)
+                .attr('class', 'legend-line');
+        
+            legend.append('text')
+                .attr('x', 432)
+                .attr('y', 5)
+                .attr('class', 'legend')
+                .text(legendText);
+        }
     }
 
     // append the citation

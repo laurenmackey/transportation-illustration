@@ -424,5 +424,14 @@ var getDomain = function(chartShow, d) {
         case 'commute-heat-map':
             return d.properties.averageCommuteTime;
             break;
+        case 'commute-method-bar-x':
+            return d.commuteMethod;
+            break;
+        case 'commute-method-bar-y':
+            return d.people;
+            break;
+        case 'commute-method-bar-color':
+            return d.commuteMethod;
+            break;
     }
 }

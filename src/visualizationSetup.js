@@ -279,7 +279,19 @@ var variables = function (ageJson, commuteMethodJson, stateJson, stateGeoJson, c
 
         show('commute-method-paragraph');
         show('commute-method-paragraph-div');
-        show('commute-method');
+        show('commute-method-bar');
+
+        // call barChart function to create the commute method bar chart viz
+            barChart('commute-method-bar',
+                   commuteMethodJson,
+                   'Commute Method', 
+                   commuteMethods,
+                   null, 
+                   111448640, 
+                   7,
+                   'Your ___',
+                   'Source: U.S. Census American Community Survey',
+                   ' People'); 
 
         if (bicycleTransit) {
             document.getElementById('waffle-bicycle').textContent = bicycleMileageText;
