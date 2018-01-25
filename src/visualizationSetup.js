@@ -5,11 +5,13 @@
 *****************************************/
 var parseAndRender = function() {
     d3.json('ageData.json', function(ageJson) {
-        d3.json('stateData.json', function(stateJson) {
-            d3.json('usStates.json', function(stateGeoJson) {
-                d3.json('countyData.json', function(countyJson) {
-                    d3.json('usCounties.json', function(countyGeoJson) {
-                        variables(ageJson, stateJson, stateGeoJson, countyJson, countyGeoJson);
+        d3.json('commuteMethodData.json', function(commuteMethodJson) {
+            d3.json('stateData.json', function(stateJson) {
+                d3.json('usStates.json', function(stateGeoJson) {
+                    d3.json('countyData.json', function(countyJson) {
+                        d3.json('usCounties.json', function(countyGeoJson) {
+                            variables(ageJson, commuteMethodJson, stateJson, stateGeoJson, countyJson, countyGeoJson);
+                        })
                     })
                 })
             })
@@ -23,14 +25,15 @@ var parseAndRender = function() {
 ** input
 *****************************************
 *****************************************/
-var variables = function (ageJson, stateJson, stateGeoJson, countyJson, countyGeoJson) {
+var variables = function (ageJson, commuteMethodJson, stateJson, stateGeoJson, countyJson, countyGeoJson) {
     // obtain all variables from profile page
     var age = document.getElementById('age').value,
         county = document.getElementById('county').value,
         transitTypes = document.getElementsByClassName('transit-types'),
         transitMiles = document.getElementsByClassName('transit-miles'),
         work = document.getElementsByClassName('work'),
-        commute = Number(document.getElementById('commute').value);
+        commute = Number(document.getElementById('commute').value),
+        commuteMethodsRaw = document.getElementsByClassName('work');
 
     // determine state variable from county input
     var commaLocation = county.search(","),
@@ -39,6 +42,8 @@ var variables = function (ageJson, stateJson, stateGeoJson, countyJson, countyGe
 
     // declare variables to help store inputs
     var transitLength = transitTypes.length / 2,
+        commuteMethodsLength = commuteMethodsRaw.length,
+        commuteMethods = [],
         milesLength = transitMiles.length,
         workLength = work.length / 2,
         carTransit = false,
@@ -82,6 +87,10 @@ var variables = function (ageJson, stateJson, stateGeoJson, countyJson, countyGe
         }
     }
 
+    for (var n = 1; n < commuteMethodsLength; n += 2) {
+        commuteMethods.push(commuteMethodsRaw[n].value);
+    }
+
     milesTotal = Math.floor(carMileage + bicycleMileage + walkMileage + publicMileage);
 
     // loop through work array to get work transit types
@@ -101,15 +110,14 @@ var variables = function (ageJson, stateJson, stateGeoJson, countyJson, countyGe
         }
     }
 
-    // age = 16;
-    // //county = 'Sacramento County, California';
-    // county = 'Baker County, Oregon';
-    // carTransit = true;
-    // carMileage = 1778;
-    // commute = 32;
-    // state = 'Oregon';
-    // //state = 'California';
-    // milesTotal = 1778;
+    age = 16;
+    county = 'Baker County, Oregon';
+    carTransit = true;
+    carMileage = 1778;
+    commute = 32;
+    state = 'Oregon';
+    milesTotal = 1778;
+    commuteMethods = ['Bicycle', 'Walk'];
 
     // push corrresponding transit data to waffle viz array
     if (carTransit) {        
@@ -151,7 +159,7 @@ var variables = function (ageJson, stateJson, stateGeoJson, countyJson, countyGe
     show('buffer'); 
 
     // yell at user if a field is blank
-    if (age == 'Select age range' || !county || !transitTypes[1].value 
+    /*if (age == 'Select age range' || !county || !transitTypes[1].value 
         || !transitMiles[0].value || !work[1].value || commute == 'Select commute time') {
         pass = false;
         show('field-alert');
@@ -191,7 +199,7 @@ var variables = function (ageJson, stateJson, stateGeoJson, countyJson, countyGe
             hide('mileage-alert');
             hide('field-alert');
         }
-    }
+    }*/
 
     // if all is well, hide profile and show visualization page on Next click
     if (pass) {
@@ -250,6 +258,7 @@ var variables = function (ageJson, stateJson, stateGeoJson, countyJson, countyGe
             stateGeoJsonFiltered = filterStateGeoByState(state, stateGeoJson),
             countyGeoJsonFiltered = filterCountyGeoByState(county, countyJson, countyGeoJson);
 
+        show('commute-title');
         show('commute-heat-paragraph');
         show('commute-heat-paragraph-div');
         show('commute-heat');
@@ -265,6 +274,12 @@ var variables = function (ageJson, stateJson, stateGeoJson, countyJson, countyGe
                     'Your Commute',
                     'Source: U.S. Census American Community Survey',
                     ' County\nAverage Commute: ');
+
+        parseCommuteData(commuteMethods, commuteMethodJson);
+
+        show('commute-method-paragraph');
+        show('commute-method-paragraph-div');
+        show('commute-method');
 
         if (bicycleTransit) {
             document.getElementById('waffle-bicycle').textContent = bicycleMileageText;

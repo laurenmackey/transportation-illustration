@@ -373,6 +373,30 @@ var filterStateGeoByState = function(state, stateGeoJson) {
 
 /****************************************
 *****************************************
+** parse commute method data and generate
+** dynamic text
+*****************************************
+*****************************************/
+var parseCommuteData = function(commuteMethod, commuteMethodJson) {
+    var myParagraph = document.getElementById('commute-method-paragraph'),
+        commuteMethodString = '';
+
+    // find relevant commute method data
+    for (var i in commuteMethodJson) {
+        for (var j in commuteMethod) {
+            if (commuteMethodJson[i].commuteMethod == commuteMethod[j]) {
+                commuteMethodString += 'You are one of <span class="bold">' + addCommas(commuteMethodJson[i].people)
+                + '</span> Americans who commute by <span class="bold">' + commuteMethodJson[i].string + '</span>. ';
+            } 
+        }
+    }
+
+    document.getElementById('commute-method-paragraph').innerHTML = commuteMethodString;
+    //.append(commuteMethodString);
+}
+
+/****************************************
+*****************************************
 ** get the relevant domain for the given 
 ** chart
 *****************************************

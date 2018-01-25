@@ -1,0 +1,37 @@
+[
+    {
+        "commuteMethod": "Car - Solo",
+        "string": "car",
+        "people": 111448640
+    },
+    {
+        "commuteMethod": "Car - Carpool",
+        "string": "carpooling in a car",
+        "people": 13588601
+    },
+    {
+        "commuteMethod": "Public Transport",
+        "string": "public transit",
+        "people": 7476312
+    },
+    {
+        "commuteMethod": "Walk",
+        "string": "walking",
+        "people": 4030730
+    },
+    {
+        "commuteMethod": "Work from Home",
+        "string": "working from home",
+        "people": 6661892
+    },
+    {
+        "commuteMethod": "Bicycle",
+        "string": "bicycle",
+        "people": 863979
+    },
+    {
+        "commuteMethod": "Other",
+        "string": "a non-traditional method",
+        "people": 2655046
+    }
+]
