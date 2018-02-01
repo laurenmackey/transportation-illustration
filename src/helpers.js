@@ -29,6 +29,24 @@ var show = function(pageShow) {
 
 /****************************************
 *****************************************
+** hide all paragraphs
+*****************************************
+*****************************************/
+var hideAll = function() {
+    var myPars = document.getElementsByClassName('paragraph'),
+        myVizs = document.getElementsByClassName('visualization'); 
+
+    for (var i = 0; i < myPars.length; i++) {
+        myPars[i].classList.add('none');
+    }
+
+    for (var j = 0; j < myVizs.length; j++) {
+        myVizs[j].classList.add('none');
+    }
+}
+
+/****************************************
+*****************************************
 ** add commas to a number
 *****************************************
 *****************************************/

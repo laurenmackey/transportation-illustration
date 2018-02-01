@@ -17,6 +17,9 @@ var waffleChart = function (milesTotal, waffleData) {
         theData = [],
         waffleDataClassHover = [];
 
+    // prevent multiple svg's from being created
+    d3.select('#waffle').selectAll('svg').remove();
+
     // set colors
     var color = d3.scale.ordinal()
         .domain(['car', 'bicycle', 'walk', 'public'])
@@ -37,9 +40,6 @@ var waffleChart = function (milesTotal, waffleData) {
             theData.push({'method': d.method, 'boxes': d.boxes, 'percent': d.percent});
         }
     });
-
-    // prevent multiple svg's from being created
-    d3.select('#waffle').selectAll('svg').remove();
 
     // append an svg to the div
     var waffle = d3.select('#waffle')

@@ -26,6 +26,10 @@ var parseAndRender = function() {
 *****************************************
 *****************************************/
 var variables = function (ageJson, commuteMethodJson, stateJson, stateGeoJson, countyJson, countyGeoJson) {
+    // hide all the previously created paragraphs and visualizations
+    //  in case user went back and changed values
+    hideAll();
+
     // obtain all variables from profile page
     var age = document.getElementById('age').value,
         county = document.getElementById('county').value,
@@ -110,14 +114,14 @@ var variables = function (ageJson, commuteMethodJson, stateJson, stateGeoJson, c
         }
     }
 
-    age = 16;
-    county = 'Baker County, Oregon';
-    carTransit = true;
-    carMileage = 1778;
-    commute = 32;
-    state = 'Oregon';
-    milesTotal = 1778;
-    commuteMethods = ['Bicycle', 'Walk'];
+    // age = 16;
+    // county = 'Baker County, Oregon';
+    // carTransit = true;
+    // carMileage = 1778;
+    // commute = 32;
+    // state = 'Oregon';
+    // milesTotal = 1778;
+    // commuteMethods = ['Bicycle', 'Walk'];
 
     // push corrresponding transit data to waffle viz array
     if (carTransit) {        
@@ -143,20 +147,6 @@ var variables = function (ageJson, commuteMethodJson, stateJson, stateGeoJson, c
         index++;
         publicMileageText = addCommas(publicMileage);
     }
-
-    // hide any previous waffle paragraph info and other charts in case user went back and changed
-    hide('waffle-car-paragraph');
-    hide('waffle-bicycle-paragraph');
-    hide('waffle-walk-paragraph');
-    hide('waffle-public-paragraph');
-    hide('driving-title');
-    hide('driving-bar-paragraph');
-    hide('driving-bar');
-    hide('driving-bar-paragraph-div');
-    hide('driving-heat-paragraph');
-    hide('driving-heat');
-    hide('driving-heat-paragraph-div');
-    show('buffer'); 
 
     // yell at user if a field is blank
     /*if (age == 'Select age range' || !county || !transitTypes[1].value 
@@ -203,8 +193,12 @@ var variables = function (ageJson, commuteMethodJson, stateJson, stateGeoJson, c
 
     // if all is well, hide profile and show visualization page on Next click
     if (pass) {
-        hideShow('profile', 'visualization');
         parseGeoData(state, county, carMileage, commute, stateJson, stateGeoJson, countyJson, countyGeoJson);
+
+        // call waffleChart function to create the waffle chart transit breakdown viz
+        waffleChart(milesTotal, waffleData);
+        show('divbuffer1');
+        hide('buffer2');
 
         // if they drive, show the corresponding vizs
         if (carTransit) {
@@ -222,10 +216,8 @@ var variables = function (ageJson, commuteMethodJson, stateJson, stateGeoJson, c
             show('driving-heat-paragraph');
             show('driving-heat-paragraph-div');
             show('driving-heat');
-            hide('buffer');
-
-            // call waffleChart function to create the waffle chart transit breakdown viz
-            waffleChart(milesTotal, waffleData);
+            show('divbuffer2');
+            hide('buffer1');
     
             // call barChart function to create the age bar chart driving viz
             barChart('driving-bar',
@@ -262,6 +254,8 @@ var variables = function (ageJson, commuteMethodJson, stateJson, stateGeoJson, c
         show('commute-heat-paragraph');
         show('commute-heat-paragraph-div');
         show('commute-heat');
+
+        // call heatmap function to create the commute time by county heat map viz
         heatMapUS('commute-heat',
                     county, 
                     commute, 
@@ -282,16 +276,16 @@ var variables = function (ageJson, commuteMethodJson, stateJson, stateGeoJson, c
         show('commute-method-bar');
 
         // call barChart function to create the commute method bar chart viz
-            barChart('commute-method-bar',
-                   commuteMethodJson,
-                   'Commute Method', 
-                   commuteMethods,
-                   null, 
-                   111448640, 
-                   7,
-                   'Your ___',
-                   'Source: U.S. Census American Community Survey',
-                   ' People'); 
+        barChart('commute-method-bar',
+               commuteMethodJson,
+               'Commute Method', 
+               commuteMethods,
+               null, 
+               111448640, 
+               7,
+               'Your ___',
+               'Source: U.S. Census American Community Survey',
+               ' People'); 
 
         if (bicycleTransit) {
             document.getElementById('waffle-bicycle').textContent = bicycleMileageText;
@@ -307,5 +301,7 @@ var variables = function (ageJson, commuteMethodJson, stateJson, stateGeoJson, c
             document.getElementById('waffle-public').textContent = publicMileageText;
             show('waffle-public-paragraph');
         }
+
+        hideShow('profile', 'visualization');
     }
 }
