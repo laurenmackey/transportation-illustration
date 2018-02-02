@@ -27,8 +27,8 @@ var parseAndRender = function() {
 *****************************************/
 var variables = function (ageJson, commuteMethodJson, stateJson, stateGeoJson, countyJson, countyGeoJson) {
     // hide all the previously created paragraphs and visualizations
-    //  in case user went back and changed values
-    hideAll();
+    // in case user went back and changed values
+    //hideAll();
 
     // obtain all variables from profile page
     var age = document.getElementById('age').value,
@@ -40,8 +40,7 @@ var variables = function (ageJson, commuteMethodJson, stateJson, stateGeoJson, c
         commuteMethodsRaw = document.getElementsByClassName('work');
 
     // determine state variable from county input
-    var commaLocation = county.search(","),
-        stateLocation = commaLocation + 2,
+    var stateLocation = county.search(",") + 2,
         state = county.substr(stateLocation, (county.length - stateLocation + 1));
 
     // declare variables to help store inputs
@@ -50,7 +49,11 @@ var variables = function (ageJson, commuteMethodJson, stateJson, stateGeoJson, c
         commuteMethods = [],
         milesLength = transitMiles.length,
         workLength = work.length / 2,
-        carTransit = false,
+        mileageDict = {},
+        waffleData = [];
+
+    // DELETE THESE ONCE BELOW FIXED
+    var carTransit = false,
         carMileage = 0,
         carMileageText,
         bicycleTransit = false,
@@ -62,17 +65,9 @@ var variables = function (ageJson, commuteMethodJson, stateJson, stateGeoJson, c
         publicTransit = false,
         publicMileage = 0,
         publicMileageText,
-        carSoloWork = false,
-        carCarpoolWork = false,
-        publicWork = false,
-        walkWork = false,
-        wfhWork = false,
-        bicycleWork = false,
         pass = true,
-        passTwo = true,
         milesTotal,
-        index = 0,
-        waffleData = [];
+        index = 0;
 
     // set mileage numbers for each transit type, converted to annual number
     for (var i = 1; i < transitLength * 2; i += 2) {
@@ -91,48 +86,47 @@ var variables = function (ageJson, commuteMethodJson, stateJson, stateGeoJson, c
         }
     }
 
+    for (var i = 1; i < transitLength * 2; i += 2) {
+        mileageDict[transitTypes[i].value] = Math.floor((Number(transitMiles[i / 2 - .5].value)) * 52.3);
+    }
+
+    // START HERE! Trying to replace old way of generating waffle viz data (below), this is almost there but not quite working
+    for (var aa = 0; aa < Object.keys(mileageDict).length; aa++) {
+        console.log(Object.keys(mileageDict)[aa]);
+        waffleData[aa] = {'method': Object.keys(mileageDict)[aa].toLowerCase(), 'mileage': Object.keys(mileageDict)[aa].value, 
+                        'display': Object.keys(mileageDict)[aa] + ': \n'};
+    }
+
+    console.log(waffleData);
+
     for (var n = 1; n < commuteMethodsLength; n += 2) {
         commuteMethods.push(commuteMethodsRaw[n].value);
     }
 
     milesTotal = Math.floor(carMileage + bicycleMileage + walkMileage + publicMileage);
 
-    // loop through work array to get work transit types
-    for (var j = 1; j < workLength * 2; j += 2) {
-        if (work[j].value == 'Car - Solo') {
-            carSoloWork = true;
-        } else if (work[j].value == 'Car - Carpool') {
-            carCarpoolWork = true;
-        } else if (work[j].value == 'Public Transport (Bus, Subway, Light Rail, Train)') {
-            publicWork = true;
-        } else if (work[j].value == 'Walk') {
-            walkWork = true;
-        } else if (work[j].value == 'Work from Home') {
-            wfhWork = true;
-        } else if (work[j].value == 'Bicycle') {
-            bicycleWork = true;
-        }
-    }
-
     // age = 16;
     // county = 'Baker County, Oregon';
     // carTransit = true;
     // carMileage = 1778;
+    // bicycleTransit = true;
+    // bicycleMileage = 1778;
     // commute = 32;
     // state = 'Oregon';
     // milesTotal = 1778;
     // commuteMethods = ['Bicycle', 'Walk'];
 
+    // DELETE THIS AND PUSH DYNAMIC TEXT CREATION FOR WAFFLE VIZ TO HELPERS FILE, ONCE ABOVE FIXED
     // push corrresponding transit data to waffle viz array
     if (carTransit) {        
-        waffleData[index] = {'method': 'car', 'mileage': carMileage, 'display': 'Car: \n'};
-        index++;
+        //waffleData[index] = {'method': 'car', 'mileage': carMileage, 'display': 'Car: \n'};
+        //index++;
         carMileageText = addCommas(carMileage);        
     }
 
     if (bicycleTransit) {
-        waffleData[index] = {'method': 'bicycle', 'mileage': bicycleMileage, 'display': 'Bicycle: \n'};
-        index++;
+        //waffleData[index] = {'method': 'bicycle', 'mileage': bicycleMileage, 'display': 'Bicycle: \n'};
+        //index++;
         bicycleMileageText = addCommas(bicycleMileage);
     }
 
@@ -197,9 +191,8 @@ var variables = function (ageJson, commuteMethodJson, stateJson, stateGeoJson, c
 
         // call waffleChart function to create the waffle chart transit breakdown viz
         waffleChart(milesTotal, waffleData);
-        show('divbuffer1');
-        hide('buffer2');
 
+        // ONCE ABOVE FIXED, DELETE ALL IND. TEXT CONTENT CALLS AND DO THAT VIA LOOP IN HELPERS
         // if they drive, show the corresponding vizs
         if (carTransit) {
             document.getElementById('waffle-car').textContent = carMileageText;
@@ -208,16 +201,8 @@ var variables = function (ageJson, commuteMethodJson, stateJson, stateGeoJson, c
             // parse and link age, state, and geo data
             parseAgeData(age, carMileage, ageJson);
     
-            // show first driving viz and paragraph, plus hide buffer div
-            show('driving-title');
-            show('driving-bar-paragraph');
-            show('driving-bar-paragraph-div');
-            show('driving-bar');
-            show('driving-heat-paragraph');
-            show('driving-heat-paragraph-div');
-            show('driving-heat');
-            show('divbuffer2');
-            hide('buffer1');
+            // show both driving vizs and paragraphs
+            show('vizBlockCarTransit');
     
             // call barChart function to create the age bar chart driving viz
             barChart('driving-bar',
@@ -250,11 +235,6 @@ var variables = function (ageJson, commuteMethodJson, stateJson, stateGeoJson, c
             stateGeoJsonFiltered = filterStateGeoByState(state, stateGeoJson),
             countyGeoJsonFiltered = filterCountyGeoByState(county, countyJson, countyGeoJson);
 
-        show('commute-title');
-        show('commute-heat-paragraph');
-        show('commute-heat-paragraph-div');
-        show('commute-heat');
-
         // call heatmap function to create the commute time by county heat map viz
         heatMapUS('commute-heat',
                     county, 
@@ -270,10 +250,6 @@ var variables = function (ageJson, commuteMethodJson, stateJson, stateGeoJson, c
                     ' County\nAverage Commute: ');
 
         parseCommuteData(commuteMethods, commuteMethodJson);
-
-        show('commute-method-paragraph');
-        show('commute-method-paragraph-div');
-        show('commute-method-bar');
 
         // call barChart function to create the commute method bar chart viz
         barChart('commute-method-bar',
@@ -302,6 +278,8 @@ var variables = function (ageJson, commuteMethodJson, stateJson, stateGeoJson, c
             show('waffle-public-paragraph');
         }
 
+        show('vizBlockWaffle');
+        show('vizBlockCommute');
         hideShow('profile', 'visualization');
     }
 }
