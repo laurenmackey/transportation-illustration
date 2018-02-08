@@ -1,7 +1,7 @@
 /****************************************
 *****************************************
-** generate the waffle viz of all transit
-** data broken down
+** generate the waffle viz to show your
+** transit breakdown
 *****************************************
 *****************************************/
 var waffleChart = function (milesTotal, waffleData) {
@@ -89,13 +89,12 @@ var waffleChart = function (milesTotal, waffleData) {
 
 /****************************************
 *****************************************
-** generate the bar chart viz of how your
-** driving data compares to all ages
+** generate the bar chart viz
 *****************************************
 *****************************************/
 var barChart = function (chartShow, 
                         dataset, 
-                        xText, 
+                        yText, 
                         highlightValue, 
                         personalLineNum, 
                         graphRange,
@@ -103,26 +102,26 @@ var barChart = function (chartShow,
                         legendText,
                         citationText,
                         hoverText) {
- 
     // declare variables
     var margin = {top: 10, right: 15, bottom: 45, left: 75},
         width = 515 - margin.left - margin.right,
         height = 335 - margin.top - margin.bottom,
         barDataIdentificationHover = [];
+
+    // prevent multiple svg's from being created
+    d3.select('#' + chartShow).selectAll('svg').remove();
  
     // create x and y scale functions that map each value in the domain to 
     // a value in the specified range
     var xScale = d3.scale.ordinal()
         .domain(dataset.map(function(d) {
             return getDomain(chartShow + '-x', d);
-            //return d.bar;
         }))
         .rangeRoundBands([0, width], 0.3);
  
     var yScale = d3.scale.linear()
         .domain([0, d3.max(dataset, function(d) {
             return getDomain(chartShow + '-y', d);
-            //return d.yAxis;
         })])
         .range([height, 0]);
  
@@ -134,9 +133,6 @@ var barChart = function (chartShow,
     var yAxis = d3.svg.axis()
         .scale(yScale)
         .orient('left');
- 
-    // prevent multiple svg's from being created
-    d3.select('#' + chartShow).selectAll('svg').remove();
     
     // append an svg to the div
     var svg = d3.select('#' + chartShow)
@@ -182,7 +178,7 @@ var barChart = function (chartShow,
         .attr('dx', '5.8em')
         .attr('fill', '#666')
         .style('text-anchor', 'end')
-        .text(xText);
+        .text(yText);
  
     // append the bars
     var bar = svg.selectAll('.bar')
@@ -195,11 +191,9 @@ var barChart = function (chartShow,
             })
             .attr('x', function(d) {
                 return xScale(getDomain(chartShow + '-x', d));
-                //return xScale(d.bar);
             })
             .attr('y', function(d) {
                 return yScale(getDomain(chartShow + '-y', d));
-                //return yScale(d.yAxis);
             })
             .attr('height', function(d) {
                 return height - yScale(getDomain(chartShow + '-y', d));
@@ -208,10 +202,12 @@ var barChart = function (chartShow,
             .attr('fill', function(d,i) {
                 switch(chartShow) {
                     case 'commute-method-bar':
+                        // possible to have two colored bars
                         return (getDomain(chartShow + '-color', d) == highlightValue[0] 
                                 || getDomain(chartShow + '-color', d) == highlightValue[1]) ? '#98df8a' : '#6baed6';
                         break;
                     default:
+                        // will only have one colored bar
                         return getDomain(chartShow + '-color', d) == highlightValue ? '#98df8a' : '#6baed6';
                         break;
                 }
@@ -226,7 +222,7 @@ var barChart = function (chartShow,
            .attr('y1', yScale(personalLineNum))
            .attr('y2', yScale(personalLineNum));
 
-           // append the graph legend if their mileage is in the y range
+        // append the graph legend if their mileage is in the y range
         if (personalLineNum <= graphRange) {
             var legend = svg.append('g')
                 .attr('transform', 'translate(-80, 0)');
@@ -258,13 +254,15 @@ var barChart = function (chartShow,
     // create array of selections for hover effect
     for (var i in dataset) {
         barDataIdentificationHover[i] = d3.selectAll('rect#' + dataset[i].id);
-        createHovers(barDataIdentificationHover[i], tooltipBar, addCommas(getDomain(chartShow + '-y', dataset[i])) + hoverText, chartShow);
+        createHovers(barDataIdentificationHover[i], tooltipBar, addCommas(getDomain(chartShow + '-y', 
+                    dataset[i])) + hoverText, chartShow);
     }
 }
 
 /****************************************
 *****************************************
-** generate the heatmap viz
+** generate the US heat map viz on either
+** a county or state level
 *****************************************
 *****************************************/
 var heatMapUS = function (chartShow,
@@ -358,6 +356,7 @@ var heatMapUS = function (chartShow,
             return color(value);
         });
 
+    // get the bounds for the county-level heatmap
     if (chartShow == 'commute-heat') {
         var bounds = path.bounds(stateGeoDataset[0]),
             dx = bounds[1][0] - bounds[0][0],
@@ -367,9 +366,8 @@ var heatMapUS = function (chartShow,
             myScale = 0.9 / Math.max(dx / width, dy / height),
             translate = [width / 2 - myScale * x, height / 2 - myScale * y];
     
-        myState.transition()
-            .style("stroke-width", 1.5 / myScale + "px")
-            .attr("transform", "translate(" + translate + ")scale(" + myScale + ")");
+        myState.style("stroke-width", 1.5 / myScale + "px")
+        myState.attr("transform", "translate(" + translate + ")scale(" + myScale + ")");
     }
 
     // make the legend - set the gradient

@@ -11,7 +11,7 @@ var hideShow = function(pageHide, pageShow)
 
 /****************************************
 *****************************************
-** hide passed-in pages
+** hide passed-in page
 *****************************************
 *****************************************/
 var hide = function(pageHide) {
@@ -20,29 +20,11 @@ var hide = function(pageHide) {
 
 /****************************************
 *****************************************
-** show passed-in pages
+** show passed-in page
 *****************************************
 *****************************************/
 var show = function(pageShow) {
     document.getElementById(pageShow).classList.remove('none');
-}
-
-/****************************************
-*****************************************
-** hide all paragraphs
-*****************************************
-*****************************************/
-var hideAll = function() {
-    var myPars = document.getElementsByClassName('paragraph'),
-        myVizs = document.getElementsByClassName('visualization'); 
-
-    for (var i = 0; i < myPars.length; i++) {
-        myPars[i].classList.add('none');
-    }
-
-    for (var j = 0; j < myVizs.length; j++) {
-        myVizs[j].classList.add('none');
-    }
 }
 
 /****************************************
@@ -75,7 +57,7 @@ var round = function (value, precision) {
 
 /****************************************
 *****************************************
-** return a string of more or less
+** return a string of 'more' or 'less'
 ** depending on passed-in parameters
 *****************************************
 *****************************************/
@@ -95,6 +77,26 @@ var determineMoreLess = function(a, b) {
 *****************************************/
 var fillText = function(id, fillText) {
     document.getElementById(id).textContent = fillText;
+}
+
+/****************************************
+*****************************************
+** fill the text of the waffle chart viz
+** paragraph
+*****************************************
+*****************************************/
+var fillTextWaffle = function(mileageDict) {
+    for (var i = 0; i < Object.keys(mileageDict).length; i++) {
+        // get commute methods
+        var transitWords = Object.keys(mileageDict)[i].split(" ");
+
+        // fill corresponding paragraph with the relevant mileage
+        fillText('waffle-' + transitWords[0].toLowerCase(), 
+                addCommas(mileageDict[Object.keys(mileageDict)[i]]));
+
+        // show corresponding paragraph
+        show('waffle-' + transitWords[0].toLowerCase() + '-paragraph');
+    }
 }
 
 /****************************************
@@ -149,7 +151,8 @@ var createHovers = function(hoverSelection, tooltip, myText, chartShow) {
 
 /****************************************
 *****************************************
-** add data from one state JSON to another
+** add data from one state JSON to 
+** another
 *****************************************
 *****************************************/
 var addToStateJson = function(fromJson, toJson) {
@@ -158,6 +161,7 @@ var addToStateJson = function(fromJson, toJson) {
 
         for (var j in fromJson) {
             if (currentGeoName == fromJson[j].state) {
+                // add average driving miles and commute time
                 toJson.features[i].properties.averageDrivingMiles = fromJson[j].averageDrivingMiles;
                 toJson.features[i].properties.averageCommuteTime = fromJson[j].averageCommuteTime;
             }
@@ -167,7 +171,8 @@ var addToStateJson = function(fromJson, toJson) {
 
 /****************************************
 *****************************************
-** add data from one county JSON to another
+** add data from one county JSON to 
+** another
 *****************************************
 *****************************************/
 var addToCountyJson = function(fromJson, toJson) {
@@ -176,6 +181,7 @@ var addToCountyJson = function(fromJson, toJson) {
 
         for (var j in fromJson) {
             if (currentGeoId == fromJson[j].id) {
+                // add average commute time
                 toJson.features[i].properties.averageCommuteTime = fromJson[j].averageCommuteTime;
             }
         }
@@ -197,7 +203,7 @@ var parseAgeData = function(age, carMileage, ageJson) {
         totalMoreLess,
         carMileageString = addCommas(carMileage); 
 
-    // generate dynamic text for age comparison
+    // find average miles for their age
     // if they're under 16, they drive more automatically
     if (age == 'U16') {
         agePercent = '100%';
@@ -210,18 +216,18 @@ var parseAgeData = function(age, carMileage, ageJson) {
         }
     }
 
-    agePercent = addCommas(Math.floor(Math.abs((ageMiles - carMileage) / ageMiles * 100)));
-    agePercent = String(agePercent) + '%';
+    // determine how much more or less this user drives compared to their age group's average
+    agePercent = String(addCommas(Math.floor(Math.abs((ageMiles - carMileage) / ageMiles * 100)))) + '%';
     ageMoreLess = determineMoreLess(carMileage, ageMiles);
 
-    // get total miles and generate dynamic text for
-    // total comparison
+    // find average miles across all ages
     for (var j in ageJson) {
         if (ageJson[j].age == 'total') {
             totalMiles = ageJson[j].averageDrivingMiles.toString();
         }
     }
 
+    // determine how much more or less this user drives compared to the overall average
     totalPercent = String(addCommas(Math.floor(Math.abs((totalMiles - carMileage) / totalMiles * 100)))) + '%';
     totalMoreLess = determineMoreLess(carMileage, totalMiles);
 
@@ -235,8 +241,8 @@ var parseAgeData = function(age, carMileage, ageJson) {
 
 /****************************************
 *****************************************
-** parse state data and generate dynamic
-** text
+** parse state and county data and
+** generate dynamic text
 *****************************************
 *****************************************/
 var parseGeoData = function(state, county, carMileage, commute, stateJson, 
@@ -251,7 +257,7 @@ var parseGeoData = function(state, county, carMileage, commute, stateJson,
         countyCommuteMoreLess,
         countyCommuteDifference;
 
-    // generate dynamic text for state comparison
+    // determine the average miles and commute for this user's state
     for (var i in stateJson) {
         if (stateJson[i].state == state)
         {
@@ -260,12 +266,15 @@ var parseGeoData = function(state, county, carMileage, commute, stateJson,
         }
     }
 
+    // determine how much more or less this user drives compared to their state average
     statePercent = String(addCommas(Math.floor(Math.abs((stateMiles - carMileage) / stateMiles * 100)))) + '%';
     stateMoreLess = determineMoreLess(carMileage, stateMiles);
+
+    // determine how much more or less this user commutes compared to their state average
     stateCommuteDifference = round(stateCommute - commute, 2);
     stateCommuteMoreLess = determineMoreLess(0, stateCommuteDifference);
 
-    // generate dynamic text for county comparison
+    // determine the average commute time for this user's county
     for (var j in countyJson) {
         if (countyJson[j].county == county)
         {
@@ -273,6 +282,7 @@ var parseGeoData = function(state, county, carMileage, commute, stateJson,
         }
     }
 
+    // determine how much more or less this user commutes compared to their county averageLat
     countyCommuteDifference = round(countyCommute - commute, 2);
     countyCommuteMoreLess = determineMoreLess(0, countyCommuteDifference);
 
@@ -287,7 +297,7 @@ var parseGeoData = function(state, county, carMileage, commute, stateJson,
     fillText('county-commute-difference', addCommas(Math.abs(countyCommuteDifference)));
     fillText('county-commute-moreless', countyCommuteMoreLess);
 
-    // add state average mileage from stateJson to stateGeoJson
+    // add state average miles from stateJson to stateGeoJson
     addToStateJson(stateJson, stateGeoJson);
 
     // add county average commute from countyJson to countyGeoJson
@@ -304,22 +314,21 @@ var filterCountyGeoByState = function(county, countyJson, countyGeoJson) {
     var stateId,
         stateGeoData = [];
 
-    // get the appropriate state ID for this county from the countyJson file
+    // get the appropriate state ID for this county from countyJson
     for (var i in countyJson) {
         if (county == countyJson[i].county) {
             stateId = countyJson[i].id.substring(countyJson[i].id.indexOf('US') + 2, countyJson[i].id.indexOf('US') + 4);
         }   
     }
     
-    // add data for the full state to the stateGeoData array
+    // add geo data for all counties in the state to the stateGeoData array
     stateGeoData = countyGeoJson.features.filter(function(d) {
         return d.properties.state == stateId;
     })
 
+    // determine coordinate bounds for this state
     var allLats = [],
-        allLongs = [],
-        maxCoords = {},
-        minCoords = {};
+        allLongs = [];
 
     for (var j in stateGeoData) {
         currentCity = stateGeoData[j].geometry;
@@ -396,10 +405,9 @@ var filterStateGeoByState = function(state, stateGeoJson) {
 *****************************************
 *****************************************/
 var parseCommuteData = function(commuteMethod, commuteMethodJson) {
-    var myParagraph = document.getElementById('commute-method-paragraph'),
-        commuteMethodString = '';
+    var commuteMethodString = '';
 
-    // find relevant commute method data
+    // determine user's commute method data
     for (var i in commuteMethodJson) {
         for (var j in commuteMethod) {
             if (commuteMethodJson[i].commuteMethod == commuteMethod[j]) {
@@ -410,13 +418,12 @@ var parseCommuteData = function(commuteMethod, commuteMethodJson) {
     }
 
     document.getElementById('commute-method-paragraph').innerHTML = commuteMethodString;
-    //.append(commuteMethodString);
 }
 
 /****************************************
 *****************************************
-** get the relevant domain for the given 
-** chart
+** get the relevant domain for the 
+** passed-in chart
 *****************************************
 *****************************************/
 var getDomain = function(chartShow, d) {
