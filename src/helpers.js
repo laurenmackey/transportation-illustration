@@ -404,16 +404,27 @@ var filterStateGeoByState = function(state, stateGeoJson) {
 ** dynamic text
 *****************************************
 *****************************************/
-var parseCommuteData = function(commuteMethod, commuteMethodJson) {
-    var commuteMethodString = '';
+var parseCommuteData = function(commuteMethods, commuteMethodJson) {
+    var commuteMethodString = '',
+        validCommuteMethods = [];
 
-    // determine user's commute method data
+    // determine commmute methods we have data for
     for (var i in commuteMethodJson) {
-        for (var j in commuteMethod) {
-            if (commuteMethodJson[i].commuteMethod == commuteMethod[j]) {
-                commuteMethodString += 'You are one of <span class="bold">' + addCommas(commuteMethodJson[i].people)
-                + '</span> Americans who commute by <span class="bold">' + commuteMethodJson[i].string + '</span>. ';
-            } 
+        validCommuteMethods.push(commuteMethodJson[i].commuteMethod);
+    }
+
+    for (var j in commuteMethods) {
+        // if they commute via a method we don't have data for, set it to 'Other'
+        if (!validCommuteMethods.includes(commuteMethods[j])) {
+            commuteMethods[j] = 'Other';
+        } 
+
+        // create the HTML to display their commute method data
+        for (var k in commuteMethodJson) {
+            if (commuteMethodJson[k].commuteMethod == commuteMethods[j]) {
+                commuteMethodString += 'You are one of <span class="bold">' + addCommas(commuteMethodJson[k].people)
+                + '</span> Americans who commute by <span class="bold">' + commuteMethodJson[k].string + '</span>. ';
+            }
         }
     }
 

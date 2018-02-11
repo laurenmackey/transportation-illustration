@@ -10,7 +10,7 @@
         "people": 13588601
     },
     {
-        "commuteMethod": "Public Transport",
+        "commuteMethod": "Public Transport (Bus, Subway, Light Rail, Train)",
         "string": "public transit",
         "people": 7476312
     },

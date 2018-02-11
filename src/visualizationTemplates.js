@@ -202,9 +202,13 @@ var barChart = function (chartShow,
             .attr('fill', function(d,i) {
                 switch(chartShow) {
                     case 'commute-method-bar':
-                        // possible to have two colored bars
-                        return (getDomain(chartShow + '-color', d) == highlightValue[0] 
-                                || getDomain(chartShow + '-color', d) == highlightValue[1]) ? '#98df8a' : '#6baed6';
+                        // possible to have more than one colored bar
+                        return (
+                            for (var i in highlightValue) {
+                                return (getDomain(chartShow + '-color', d) == highlightValue[i]) ? '#98df8a' : '#6baed6';
+                            })
+                        // return (getDomain(chartShow + '-color', d) == highlightValue[0] 
+                        //         || getDomain(chartShow + '-color', d) == highlightValue[1]) ? '#98df8a' : '#6baed6';
                         break;
                     default:
                         // will only have one colored bar
@@ -252,10 +256,10 @@ var barChart = function (chartShow,
     var tooltipBar = createTooltip('#' + chartShow);
 
     // create array of selections for hover effect
-    for (var i in dataset) {
-        barDataIdentificationHover[i] = d3.selectAll('rect#' + dataset[i].id);
-        createHovers(barDataIdentificationHover[i], tooltipBar, addCommas(getDomain(chartShow + '-y', 
-                    dataset[i])) + hoverText, chartShow);
+    for (var j in dataset) {
+        barDataIdentificationHover[j] = d3.selectAll('rect#' + dataset[j].id);
+        createHovers(barDataIdentificationHover[j], tooltipBar, addCommas(getDomain(chartShow + '-y', 
+                    dataset[j])) + hoverText, chartShow);
     }
 }
 
