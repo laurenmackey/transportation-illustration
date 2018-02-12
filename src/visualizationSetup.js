@@ -58,18 +58,23 @@ var variables = function (ageJson, commuteMethodJson, stateJson, stateGeoJson, c
         mileageDict = {},
         milesTotal = 0,
         waffleData = [],
+        validWaffleInputs = ['Car', 'Bicycle', 'Walk', 'Public Transport'],
         pass = true;
 
     // set mileage numbers for each transit type, converted to annual number
     for (var i = 1; i < transitLength * 2; i += 2) {
         var currentMiles = Math.floor((Number(transitMiles[i / 2 - .5].value)) * 52.3);
-        mileageDict[transitTypes[i].value] = currentMiles;
+
+        if (validWaffleInputs.includes(transitTypes[i].value)) {
+            mileageDict[transitTypes[i].value] = currentMiles;    
+        } else {
+            mileageDict['Other'] = currentMiles;   
+        }
         milesTotal += currentMiles;
     }
 
-    // set the data to be used for the waffle viz
+    // set the data to be used for the waffle viz, renaming values if user uses public transport
     for (var j = 0; j < Object.keys(mileageDict).length; j++) {
-        // rename values if user uses public transport
         if (Object.keys(mileageDict)[j].includes('Public Transport')) {
             waffleData[j] = {'method': 'public', 'mileage': mileageDict[Object.keys(mileageDict)[j]], 
                         'display': 'Public Transit: \n'};

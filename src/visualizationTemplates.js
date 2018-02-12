@@ -22,8 +22,8 @@ var waffleChart = function (milesTotal, waffleData) {
 
     // set colors
     var color = d3.scale.ordinal()
-        .domain(['car', 'bicycle', 'walk', 'public'])
-        .range(['#98df8a', '#fdd0a2', '#6baed6', '#de9ed6']);
+        .domain(['car', 'bicycle', 'walk', 'public', 'other'])
+        .range(['#98df8a', '#fdd0a2', '#6baed6', '#de9ed6', '#808080']);
 
     // add box and percent data to main array
     for (var i in Object.keys(waffleData)) {
@@ -203,12 +203,12 @@ var barChart = function (chartShow,
                 switch(chartShow) {
                     case 'commute-method-bar':
                         // possible to have more than one colored bar
-                        return (
-                            for (var i in highlightValue) {
-                                return (getDomain(chartShow + '-color', d) == highlightValue[i]) ? '#98df8a' : '#6baed6';
-                            })
-                        // return (getDomain(chartShow + '-color', d) == highlightValue[0] 
-                        //         || getDomain(chartShow + '-color', d) == highlightValue[1]) ? '#98df8a' : '#6baed6';
+                        for (var i in highlightValue) {
+                            if (getDomain(chartShow + '-color', d) == highlightValue[i]) {
+                                return '#98df8a';
+                            }
+                        }
+                        return '#6baed6';
                         break;
                     default:
                         // will only have one colored bar
