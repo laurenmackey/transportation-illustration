@@ -122,7 +122,7 @@ Html, body, div {
 /* Visualization page styling */
 
 .axis text {
-    font-size: 14px;
+    font-size: 12px;
     fill: #666;
 }
 
@@ -181,7 +181,6 @@ hr {
     margin-top: 3%;
 }
 
-
 .paragraph-larger {
     font-size: 20.5px;
     margin-top: 3%;
@@ -220,6 +219,10 @@ path.domain {
     stroke: lightgrey;
     stroke-width: 1.05;
     shape-rendering: crispEdges;
+}
+
+.yAxisLabel {
+    font-size: 13px;
 }
 
 /* Visualization page styling- Color scheme */

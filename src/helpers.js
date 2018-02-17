@@ -126,17 +126,17 @@ var createHovers = function(hoverSelection, tooltip, myText, chartShow) {
                 tooltip.style('left', (d3.select(this).attr('x')) + 'px');
                 tooltip.style('top', -65 + 'px');
                 break;
-            case 'driving-bar':
-                tooltip.style('left', Number(d3.select(this).attr('x')) + 64 + 'px');
-                tooltip.style('top', Number(d3.select(this).attr('y')) - 52 + 'px');
-                break;
+            case 'driving-heat':
+                tooltip.style('left', event.clientX - 760 + 'px');
+                tooltip.style('top', event.clientY - 400 + 'px');
+                break;    
             case 'commute-heat':
                 tooltip.style('left', event.clientX - 200 + 'px');
                 tooltip.style('top', event.clientY - 450 + 'px');
                 break;
             default: 
-                tooltip.style('left', event.clientX - 760 + 'px');
-                tooltip.style('top', event.clientY - 400 + 'px');
+                tooltip.style('left', Number(d3.select(this).attr('x')) + 64 + 'px');
+                tooltip.style('top', Number(d3.select(this).attr('y')) - 52 + 'px');
                 break;
         }
         return tooltip.style('display', 'block');

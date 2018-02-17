@@ -49,6 +49,10 @@ var variables = function (ageJson, commuteMethodJson, stateJson, stateGeoJson, c
     var stateLocation = county.search(',') + 2,
         state = county.substr(stateLocation, (county.length - stateLocation + 1));
 
+    age = '20';
+    county = 'Autauga County, Alabama';
+    state = 'Alabama';
+
     // declare variables to help store inputs
     var transitLength = transitTypes.length / 2,
         commuteMethodsLength = commuteMethodsRaw.length,
@@ -58,7 +62,7 @@ var variables = function (ageJson, commuteMethodJson, stateJson, stateGeoJson, c
         mileageDict = {},
         milesTotal = 0,
         waffleData = [],
-        validWaffleInputs = ['Car', 'Bicycle', 'Walk', 'Public Transport'],
+        validWaffleInputs = ['Car', 'Bicycle', 'Walk', 'Public Transit'],
         pass = true;
 
     // set mileage numbers for each transit type, converted to annual number
@@ -70,18 +74,15 @@ var variables = function (ageJson, commuteMethodJson, stateJson, stateGeoJson, c
         } else {
             mileageDict['Other'] = currentMiles;   
         }
+
         milesTotal += currentMiles;
     }
 
-    // set the data to be used for the waffle viz, renaming values if user uses public transport
+    // set the data to be used for the waffle viz, renaming values if user uses public transit
     for (var j = 0; j < Object.keys(mileageDict).length; j++) {
-        if (Object.keys(mileageDict)[j].includes('Public Transport')) {
-            waffleData[j] = {'method': 'public', 'mileage': mileageDict[Object.keys(mileageDict)[j]], 
-                        'display': 'Public Transit: \n'};
-        } else {
-            waffleData[j] = {'method': Object.keys(mileageDict)[j].toLowerCase(), 'mileage': mileageDict[Object.keys(mileageDict)[j]], 
-                            'display': Object.keys(mileageDict)[j] + ': \n'};
-        }
+        var currentTransit = Object.keys(mileageDict)[j];
+        waffleData[j] = {'method': currentTransit.split(' ')[0].toLowerCase(), 'mileage': mileageDict[currentTransit], 
+                            'display': currentTransit + ': \n'};
     }
 
     // find the user's commute methods
@@ -90,7 +91,7 @@ var variables = function (ageJson, commuteMethodJson, stateJson, stateGeoJson, c
     }
 
     // yell at user if a field is blank
-    if (age == 'Select age range' || !county || !transitTypes[1].value 
+    /*if (age == 'Select age range' || !county || !transitTypes[1].value 
         || !transitMiles[0].value || !work[1].value || commute == 'Select commute time') {
         pass = false;
         show('field-alert');
@@ -130,7 +131,7 @@ var variables = function (ageJson, commuteMethodJson, stateJson, stateGeoJson, c
             hide('mileage-alert');
             hide('field-alert');
         }
-    }
+    }*/
 
     // if all is well, generate relevant vizs
     if (pass) {
@@ -207,12 +208,12 @@ var variables = function (ageJson, commuteMethodJson, stateJson, stateGeoJson, c
         // call barChart function to show commute methods
         barChart('commute-method-bar',
                commuteMethodJson,
-               'Commute Method', 
+               'People', 
                commuteMethods,
                null, 
                111448640, 
-               7,
-               'Your ___',
+               5,
+               null,
                'Source: U.S. Census American Community Survey',
                ' People'); 
 

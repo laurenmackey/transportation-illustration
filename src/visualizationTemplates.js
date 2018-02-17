@@ -103,10 +103,12 @@ var barChart = function (chartShow,
                         citationText,
                         hoverText) {
     // declare variables
-    var margin = {top: 10, right: 15, bottom: 45, left: 75},
+    var margin = {top: 10, right: 15, bottom: 105, left: 75},
         width = 515 - margin.left - margin.right,
-        height = 335 - margin.top - margin.bottom,
-        barDataIdentificationHover = [];
+        height = 350 - margin.top - margin.bottom,
+        barDataIdentificationHover = [],
+        dyEm,
+        dxEm;
 
     // prevent multiple svg's from being created
     d3.select('#' + chartShow).selectAll('svg').remove();
@@ -153,7 +155,13 @@ var barChart = function (chartShow,
         .attr('class', 'axis xAxisLine')
         .attr('transform', 'translate(0,' + (height) + ')')
         .call(xAxis
-            .tickSize(0));
+            .tickSize(0))
+      .selectAll('text')
+        .attr('y', 0)
+        .attr('x', 6)
+        .attr('dy', '.35em')
+        .attr('transform', 'rotate(50)')
+        .style('text-anchor', 'start');
  
     // create the y axis grid
     var yAxisGrid = yAxis.ticks(numberOfYTicks)
@@ -167,15 +175,23 @@ var barChart = function (chartShow,
         .call(yAxisGrid);
     
     // append the y axis label
-    svg.append('rect')
-        .attr('fill', 'white')
-        .attr('height','25px')
-        .attr('width','86px')
-        .attr('transform', 'translate(0, 10)')
+    if (chartShow == 'driving-bar') {
+        svg.append('rect')
+            .attr('fill', 'white')
+            .attr('height','25px')
+            .attr('width','86px')
+            .attr('transform', 'translate(0, 10)');
+        dyEm = '1.8em';
+        dxEm = '5.8em';
+    } else {
+        dyEm = '0.5em';
+        dxEm = '3.2em';
+    }
     
     svg.append('text')
-        .attr('dy', '2em')
-        .attr('dx', '5.8em')
+        .attr('class', 'yAxisLabel')
+        .attr('dy', dyEm)
+        .attr('dx', dxEm)
         .attr('fill', '#666')
         .style('text-anchor', 'end')
         .text(yText);

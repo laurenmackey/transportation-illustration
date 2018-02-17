@@ -28,9 +28,9 @@ var typeaheadInitialize = function() {
     };
 
     // For transit and work transit options
-    var transit = ['Car', 'Bicycle', 'Walk','Public Transport (Bus, Subway, Light Rail, Train)'];
+    var transit = ['Car', 'Bicycle', 'Walk','Public Transit'];
 
-    var work = ['Car - Solo', 'Car - Carpool', 'Public Transport (Bus, Subway, Light Rail, Train)', 'Walk', 'Work from Home', 'Bicycle'];
+    var work = ['Car - Solo', 'Car - Carpool', 'Public Transit', 'Walk', 'Work from Home', 'Bicycle'];
         
     $('#field-transit .typeahead').typeahead({
         hint: true,

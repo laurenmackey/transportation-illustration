@@ -1,37 +1,44 @@
 [
     {
-        "commuteMethod": "Car - Solo",
-        "string": "car",
-        "people": 111448640
-    },
-    {
         "commuteMethod": "Car - Carpool",
         "string": "carpooling in a car",
-        "people": 13588601
+        "people": 13588601,
+        "id": "carC"
     },
     {
-        "commuteMethod": "Public Transport (Bus, Subway, Light Rail, Train)",
+        "commuteMethod": "Car - Solo",
+        "string": "car",
+        "people": 111448640,
+        "id": "carS"
+    },
+    {
+        "commuteMethod": "Public Transit",
         "string": "public transit",
-        "people": 7476312
+        "people": 7476312,
+        "id": "publicTransit"
     },
     {
         "commuteMethod": "Walk",
         "string": "walking",
-        "people": 4030730
+        "people": 4030730,
+        "id": "walk"
     },
     {
         "commuteMethod": "Work from Home",
         "string": "working from home",
-        "people": 6661892
+        "people": 6661892,
+        "id": "workFromHome"
     },
     {
         "commuteMethod": "Bicycle",
         "string": "bicycle",
-        "people": 863979
+        "people": 863979,
+        "id": "bicycle"
     },
     {
         "commuteMethod": "Other",
         "string": "a non-traditional method",
-        "people": 2655046
+        "people": 2655046,
+        "id": "other"
     }
 ]
