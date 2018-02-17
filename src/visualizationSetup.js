@@ -49,10 +49,6 @@ var variables = function (ageJson, commuteMethodJson, stateJson, stateGeoJson, c
     var stateLocation = county.search(',') + 2,
         state = county.substr(stateLocation, (county.length - stateLocation + 1));
 
-    age = '20';
-    county = 'Autauga County, Alabama';
-    state = 'Alabama';
-
     // declare variables to help store inputs
     var transitLength = transitTypes.length / 2,
         commuteMethodsLength = commuteMethodsRaw.length,
@@ -91,7 +87,7 @@ var variables = function (ageJson, commuteMethodJson, stateJson, stateGeoJson, c
     }
 
     // yell at user if a field is blank
-    /*if (age == 'Select age range' || !county || !transitTypes[1].value 
+    if (age == 'Select age range' || !county || !transitTypes[1].value 
         || !transitMiles[0].value || !work[1].value || commute == 'Select commute time') {
         pass = false;
         show('field-alert');
@@ -131,7 +127,7 @@ var variables = function (ageJson, commuteMethodJson, stateJson, stateGeoJson, c
             hide('mileage-alert');
             hide('field-alert');
         }
-    }*/
+    }
 
     // if all is well, generate relevant vizs
     if (pass) {
