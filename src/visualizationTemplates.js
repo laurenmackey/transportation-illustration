@@ -359,7 +359,7 @@ var heatMapUS = function (chartShow,
             color.range(blue);
             break;
     }
-        
+
     // draw the map
     var myState = svg.selectAll('path')
         .data(data)

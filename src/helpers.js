@@ -128,11 +128,11 @@ var createHovers = function(hoverSelection, tooltip, myText, chartShow) {
                 break;
             case 'driving-heat':
                 tooltip.style('left', event.clientX - 760 + 'px');
-                tooltip.style('top', event.clientY - 400 + 'px');
+                tooltip.style('top', event.clientY - 350 + 'px');
                 break;    
             case 'commute-heat':
                 tooltip.style('left', event.clientX - 200 + 'px');
-                tooltip.style('top', event.clientY - 450 + 'px');
+                tooltip.style('top', event.clientY - 400 + 'px');
                 break;
             default: 
                 tooltip.style('left', Number(d3.select(this).attr('x')) + 64 + 'px');
