@@ -144,6 +144,16 @@ Html, body, div {
     font-size: 13.5px;
 }
 
+#driving-bar > svg {
+    x: 0px; 
+    y: 0px;
+}
+
+.wrapper {
+    width: 900px;
+    margin: auto;
+}
+
 #driving-paragraph-one {
     margin-top: 19%;
 }

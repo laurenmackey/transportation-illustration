@@ -141,6 +141,7 @@ var barChart = function (chartShow,
         .append('svg')
             .attr('width', width + margin.left + margin.right)
             .attr('height', height + margin.top + margin.bottom)
+            .attr('viewBox', '0 0 515 350')
         .append('g')
             .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
  
@@ -311,6 +312,7 @@ var heatMapUS = function (chartShow,
     // add the svg and projection
     var svg = d3.select('#' + chartShow)
         .append('svg')
+            .attr('viewBox', '0 0 515 350')
             .attr('width', width + margin.left + margin.right)
             .attr('height', height + margin.top + margin.bottom);
 
